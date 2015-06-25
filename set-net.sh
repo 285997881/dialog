@@ -57,3 +57,5 @@ if [ "$dhcp" != "dhcp"  ] ; then
 	sed -i "s/BROADCAST.*/BROADCAST=$broad/" /etc/sysconfig/network-scripts/ifcfg-eth0
 	sed -i "s/GATEWAY.*/GATEWAY=$gatew/" /etc/sysconfig/network-scripts/ifcfg-eth0
 fi
+
+/bin/sh basic.sh

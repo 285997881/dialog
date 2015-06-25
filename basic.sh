@@ -8,10 +8,8 @@ value=`$DIALOG  \
         --title "Select what you want :" \
         --menu \
 "Please select  from the following list to use for your." 13 70 5 \
-"1" "Hostname" \
+"1" "Hostname/Ntp/Ssh" \
 "2" "Network" \
-"3" "Ntp" \
-"4" "Ssh_share" \
 2>&1 1>&3`
 
 retval=$?
@@ -36,17 +34,9 @@ case $value in
    1)
 	/bin/sh hostname.sh;;
    2)
-	echo "2";;
+	/bin/sh set-net.sh;;
    3)
 	echo "3";;
 esac
 
 
-#######################################################
-#network
-#######################################################
-set_network()
-{
-	ip addr;
-}
-set_network
