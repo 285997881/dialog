@@ -1,0 +1,34 @@
+centos 7 修改主机名的方法
+
+hostnamectl
+在7版本中，hostname有三种形式
+静态(Static host name)
+动态(Transient/dynamic host name)
+别名(Pretty host name)
+
+查询主机名
+hostnamectl或hostctl status 查询主机名
+hostnamectl status [--static|--transient|--pretty]
+
+
+修改hostname
+hostnamectl set-hostname servername [--static|--transient|--pretty]
+
+删除hostname
+hostnamectl set-hostname ""
+hostnamectl set-hostname "" --static
+hostnamectl set-hostname "" --pretty
+
+
+修改配置文件
+hostname  name
+vim /etc/hostname 
+
+
+通过nmtui修改，之后重启hostnamed
+systemctl restart systemd-hostnamed
+
+
+通过nmcui修改，之后重启hostnamed
+nmcli general hostname servername
+systemctl restart systemd-hostnamed
