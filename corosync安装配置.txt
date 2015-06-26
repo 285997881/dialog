@@ -1,0 +1,62 @@
+corosync安装
+
+yum install corosync
+
+时间同步
+主机名
+ssh互信
+
+cp /etc/sorosync/corosync.conf.example /etc/sorosync/corosync.conf
+vim /etc/corosync/corosync.conf
+
+
+totem { 
+    version: 2  
+    secauth: on #启动认证  
+    threads: 2  
+    interface {  
+        ringnumber: 0  
+        bindnetaddr: 192.168.18.0 #修改心跳线网段  
+        mcastaddr: 226.99.10.1 #组播传播心跳信息  
+        mcastport: 5405  
+        ttl: 1  
+    }  
+}
+logging { 
+    fileline: off  
+    to_stderr: no  
+    to_logfile: yes  
+    to_syslog: no  
+    logfile: /var/log/cluster/corosync.log #日志位置  
+    debug: off  
+    timestamp: on  
+    logger_subsys {  
+        subsys: AMF  
+        debug: off  
+    }  
+}
+amf { 
+    mode: disabled  
+}
+#启用pacemaker
+service { 
+    ver: 0  
+    name: pacemaker  
+}
+aisexec { 
+    user: root  
+    group: root  
+}
+
+
+
+检查初始化成员节点通知是否正常发出
+grep totem /var/log/messages
+
+检查启动过程是否有错误发生
+grep ERROR: /var/log/messages |grep -v unpack_resources
+
+检查pacemaker是否正常启动
+grep pcmk_startup /var/log/messages
+
+
