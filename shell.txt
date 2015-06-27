@@ -1,0 +1,53 @@
+特殊变量
+
+$0	当前脚本的文件名
+$n	传递给脚本或函数的参数。n 是一个数字，表示第几个参数。
+$#	传递给脚本或函数的参数个数。
+$*	传递给脚本或函数的所有参数。
+$@	传递给脚本或函数的所有参数。被双引号(" ")包含时，与 $* 稍有不同。
+$?	上个命令的退出状态，或函数的返回值。
+$$	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
+
+
+
+if ... fi 语句；
+if ... else ... fi 语句；
+if ... elif ... else ... fi 语句。
+
+
+case i in
+1)
+    command1
+    ;;
+2）
+    command1
+    ;;
+*)
+    command1
+    ;;
+esac
+
+
+
+for 变量 in 列表
+do
+    command1
+done
+
+
+while command
+do
+   command1
+done
+
+
+until command
+do
+   command1
+done
+
+
+ break 和 continue 来跳出循环
+ 
+ command >> file 2>&1
+ command < file1 >file2
