@@ -1,3 +1,188 @@
+﻿版本控制系统
+
+
+集中化的版本控制系统 Centralized Version Control Systems(CVCS)
+CVS，Subversion，Perforce 
+
+分布式版本控制系统 Distributed Version Control System(DVCS)
+Git，Mercurial，Bazaar,BitKeeper Darcs
+
+Git 官方
+http://git-scm.com/download
+
+
+Git 有三种状态
+	已提交（committed）	
+	已修改（modified）
+	已暂存（staged）
+
+三个工作区域
+	Git 的工作目录
+	暂存区域
+	本地仓库
+
+Git 工作流程如下：
+在工作目录中修改某些文件。（modified）
+对修改后的文件进行快照，然后保存到暂存区域。staged）
+提交更新，将保存在暂存区域的文件快照永久转储到 Git 目录中。（committed）
+
+
+
+从源代码安装git
+Git需要curl，zlib，openssl，expat，libiconv 等库的代码，所以需要先安装这些依赖工具。
+
+$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev libssl-dev
+
+源代码安装
+
+$ tar -zxf git-1.7.2.2.tar.gz
+$ cd git-1.7.2.2
+$ make prefix=/usr/local all
+$ sudo make prefix=/usr/local install
+
+二进制安装
+yum install git-core
+
+apt-get install git
+
+
+用git把Git项目仓库克隆到本地，以便日后随时更新
+git clone git://git.kernel.org/pub/scm/git/git.git
+
+
+
+初次运行Git前的配置
+git config   配置或读取环境变量
+
+git config --system   配置/etc/gitconfig	全局配置
+
+git config --global   配置~/.gitconfig		当前用户配置
+
+配置.git/config只对当前项目有效		当前项目配置
+
+Windows系统上，Git会找寻用户主目录下的.gitconfig文件。主目录即$HOME 变量指定的目录，一般都是C:\Documents and Settings\$USER。此外，Git还会尝试找寻/etc/gitconfig文件，只不过看当初Git装在什么目录，就以此作为根目录来定位。
+
+
+git config --global
+		配置用户信息
+			user.name "John Doe"
+			user.email johndoe@example.com
+		配置文本编辑器		
+			core.editor emacs
+
+查看配置信息
+	git config --list
+	git config -l
+
+帮助
+git help config
+
+
+从现有仓库克隆
+ git clone [url]
+
+
+检查文件状态
+git status
+
+git diff 会使用文件补丁的格式显示具体添加和删除的行
+
+查看已经暂存起来的文件和上次提交时的快照之间的差异
+git diff --cached
+git diff --staged
+
+
+提交更新
+git commit
+	-m
+	-a
+
+移除文件
+git rm
+
+
+移动文件
+git mv
+
+
+
+忽略无需纳入Git跟踪的文件
+创建一个名为.gitignore的文件，列出要忽略的文件模式
+cat .gitignore
+*.[oa]
+*~
+
+
+所有空行或者以注释符号 ＃ 开头的行都会被 Git 忽略。
+可以使用标准的 glob 模式匹配。
+匹配模式最后跟反斜杠（/）说明要忽略的是目录。
+要忽略指定模式以外的文件或目录，可以在模式前加上惊叹号（!）取反。
+
+# 此为注释 – 将被 Git 忽略
+# 忽略所有 .a 结尾的文件
+*.a
+# 但 lib.a 除外
+!lib.a
+# 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO
+/TODO
+# 忽略 build/ 目录下的所有文件
+build/
+# 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+doc/*.txt
+# ignore all .txt files in the doc/ directory
+doc/**/*.txt
+
+
+查看提交历史
+git log
+
+git log -p -2
+-p展开显示每次提交的内容差异，-2则仅显示最近的两次更新
+
+-p	按补丁格式显示每个更新之间的差异。
+
+git log一些常用的选项及其释义
+--word-diff	按 word diff 格式显示差异。
+--stat	显示每次更新的文件修改统计信息。
+--shortstat	只显示 --stat 中最后的行数修改添加移除统计。
+--name-only	仅在提交信息后显示已修改的文件清单。
+--name-status	显示新增、修改、删除的文件清单。
+--abbrev-commit	仅显示 SHA-1 的前几个字符，而非所有的 40 个字符。
+--relative-date	使用较短的相对时间显示（比如，“2 weeks ago”）。
+--graph	显示 ASCII 图形表示的分支合并历史。
+--pretty	使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。
+--oneline	--pretty=oneline --abbrev-commit 的简化用法。
+
+
+-(n)	仅显示最近的 n 条提交
+--since, --after	仅显示指定时间之后的提交。
+--until, --before	仅显示指定时间之前的提交。
+--author	仅显示指定作者相关的提交。
+
+历史图形化工具  gitk 
+--committer	仅显示指定提交者相关的提交。
+
+
+修改最后一次提交
+git commit --amend	重新提交
+
+git remote 
+
+
+
+
+本地传输
+SH 协议
+Git 协议
+HTTP 协议
+
+
+
+
 https://www.kernel.org/pub/software/scm/git/git-2.4.4.tar.xz
 
 二进制安装Git
