@@ -1,0 +1,464 @@
+snmp  simple network management protocol
+
+SNMPv1
+SNMPv2
+SNMPv3
+
+MIB(management information base)
+
+
+net-snmp(agent)
+net-snmp-utils(NMS:command)
+
+service snmpd start
+
+
+RRDTool(round robin database tool)
+
+
+
+cacti
+	rrdtool create
+	利用rrdtool绘图并展示
+	
+Cacti的工作流程，
+1 snmp协议收集远程服务器的数据
+2 将snmp收集的数据内容保存到rrd数据库中
+3 若用户查看某台设备上的流量或其它状态信息
+4 在mysql数据库中查找该设备对应的rra数据库文件的名称
+5 通过rrdtool命令进行绘图即可
+
+安装yum源 rpmforge
+rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+同步时间
+ntpdate 202.120.2.101
+hwclock -w 
+
+cacti需要LAMP环境
+yum install -y httpd php php-mysql php-snmp php-xml php-gd mysql mysql-server gd gd-devel
+
+设置开机自启动并启动服务
+chkconfig httpd on
+service httpd start
+chkconfig mysqld on
+service mysqld start
+netstat -ntulp
+
+安装net-snmp
+yum install -y net-snmp net-snmp-utils
+修改配置文件
+vim /etc/snmp/snmpd.conf
+修改前，view systemview included .1.3.6.1.2.1.1
+修改后，view systemview included .1.3.6.1.2.1
+
+安装RRDTool
+yum install -y rrdtool
+
+
+为Cacti配置虚拟主机
+vim /etc/httpd/conf/httpd.conf
+<VirtualHost *:80>
+  DocumentRoot /usr/local/cacti
+  ServerName cacti.test.com
+  ErrorLog logs/cacti.test.com-error_log
+  CustomLog logs/cacti.test.com-access_log common
+  <Directory "/usr/local/cacti">
+    Options Indexes FollowSymLinks
+    DirectoryIndex index.php index.html index.htm
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
+
+
+tar xvf /usr/local/cacti
+
+cd cacti 
+cacti.sql是保存了cacti到所有表的语句，但是没有创建数据库的语句，所以下面我们来配置一下Cacti数据库
+mysqladmin create cactidb
+mysql cactidb < cacti.sql
+
+cacti要访问数据库，得给cacti创建一个授权用户
+mysql -e "GRANT ALL ON cactidb.* TO cactiuser@localhost IDENTIFIED BY 'cactiuser'"
+mysqladmin flush-privileges
+验证用户  mysql -ucactiuser -pcactiuser
+
+修改配置文件
+vim include/config.php
+
+/* make sure these values refect your actual database/host/user/password */
+$database_type = "mysql";
+$database_default = "cactidb";
+$database_hostname = "localhost";
+$database_username = "cactiuser";
+$database_password = "cactiuser";
+$database_port = "3306";
+$database_ssl = false;
+
+$url_path ="/"; #这一行非常重要设置cacti程序访问路径的
+
+
+创建一个cacti用户（安装初始化cacti）并修改相关目录权限
+useradd cactiuser
+chown -R cactiuser:cactiuser log/ rra/
+
+重启httpd并初始化cacti
+
+
+
+
+
+
+
+nagios  全称 nagios ain't goona insist on saintood
+
+可监控windows linux vmware unix主机状态，交换机，路由器等网络设备
+
+
+功能
+	监控网络服务(SMTP POP3 HTTP FTP PING)
+	监控本机及远程主机资源(cpu负荷 磁盘利用率 进程等)
+	可实现冗余监控
+
+Nagios 监控实现原理
+Nagios 软件需安装在一台独立的服务器上运行，这台服务器称为监控中心，
+监控中心服务器可以采用 Linux 或 Unix 操作系统；
+每一台被监视的硬件主机或服务都运行一个与监控中心服务器进行通信的 Nagios 软件后台程序，
+也可以理解为 Agent 或插件均可。
+监控中心服务器读取配置文件中的指令与远程的守护程序进行通信，
+并且指示远程的守护程序进行必要的检查。
+虽然 Nagios 软件必须在 Linux 或 Unix 操作系统上运行，
+但是远程被监控的机器可以是任何能够与其进行通信的主机，
+根据远程主机返回的应答，Naigos 将依据配置进行回应；
+接着 Nagios 将通过本地的机器进行测试，如果检测返回值不正确，
+Nagios 将通过一种或多种方式报警
+	
+	
+结构
+核心 
+	提供少量监控功能
+插件 
+	从http://www.nagios.org下载
+	自己编写
+	
+	
+	
+安装相关软件包
+For RHEL/CentOS users:
+yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp
+
+For Ubuntu users:
+sudo apt-get install wget build-essential apache2 php5-gd libgd2-xpm libgd2-xpm-dev libapache2-modphp5
+
+
+下载cagios核心包和插件包
+cd /tmp
+wget http://sourceforge.net/projects/nagios/files/nagios-4.x/nagios-4.1.0/nagios-4.1.0rc1.tar.gz
+
+wget http://nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz
+
+创建nagios用户和用户组
+useradd nagios 
+groupadd nagcmd
+usermod -a -G nagcmd nagios 
+
+
+安装软件包
+tar zxvf nagios-4.1.0rc1.tar.gz
+tar zxvf nagios-plugins-2.0.3.tar.gz
+
+cd nagios-4.1.0rc1
+
+For RHEL/CentOS users:
+./configure --with-command-group=nagcmd
+For Ubuntu users:
+./configure --with-nagios-group=nagios --with-command-group=nagcmd -–with-mail=/usr/bin/sendmail
+
+
+All systems:
+make all
+make install
+make install-init  在/etc/rc.d/init.d下创建nagios启动脚本
+make install-config  安装nagios示例配置文件
+make install-commandmode  配置目录权限
+make install-webconf   httpd配置
+
+cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
+chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+/etc/init.d/httpd start
+/etc/init.d/nagios start
+
+htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+
+cd /tmp/nagios-plugins-2.0.3
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+make
+make install 
+
+
+chkconfig --add nagios
+chkconfig --level 35 nagios on
+chkconfig --add httpd
+chkconfig --level 35 httpd on
+
+
+For Ubuntu:
+ln -s /etc/init.d/nagios /etc/rcS.d/S99nagios
+
+http://ipaddress/nagios 
+
+
+nagios目录和配置文件说明
+/usr/local/nagios 
+
+
+bin  可执行程序
+etc  配置文件
+sbin cgi文件所在目录 即执行外部命令所需要的文件
+share  网页存放路径
+libexec  外部插件
+var  日志文件，lock等文件目录
+var/archives  日志自动归档目录
+var/rw  外部命令文件
+
+配置文件
+cgi.cfg	控制 CGI 访问的配置文件
+nagios.cfg	Nagios 主配置文件
+
+
+配置监控windows主机
+
+在windows主机安装NSClient++或NSCP软件
+使用netstat -an命令查看NSClient++是否启用
+12489是NSClient++的端口
+5666是NRPE的端口
+
+在服务器端nagios的插件目录/usr/local/nagioslibexec找到check_nt插件(./check_nt -h 可以查看帮助)
+测试是否可以监控
+./check_nt -H 被监控端ip -p 12489 -v UPTIME -s password
+
+到/nagios/etc/objects
+
+定义命令command.cfg
+define command{
+        command_name    check_nt
+        command_line    $USER1$/check_nt -H $HOSTADDRESS$ -p 12489 -v $ARG1$ $ARG2$
+        }
+
+定义主机(注意 监控主机上的NSClient++的密码要添加上 -s password )
+vim widows.cfg 
+启用主机
+vim /nagios/etc/nagios.cfg 
+添加一行
+cfg_file=/usr/local/nagios/etc/objects/windows.cfg
+检查是否有语法错误
+/usr/local/nagios/bin/nagios -v etc/nagios.cfg
+可以到网页查看结果了
+
+
+
+
+nrpe(端口 5666)监控主机
+Nagios Remote Plugin Executeor
+被监控主机和服务主机都要装nrpe,且被监控的主机nrpe进程要开启
+
+被监控主机(linux主机)
+添加nagios用户
+useradd -s /sbin/nologin nagios 
+
+确认开发包组已安装
+yum grouplist
+yum -y groupinstall "Development Tools" "Development Libraries"
+
+同步时间
+ntpdate 202.120.2.101
+hwclock -w 
+
+nrpe依赖nagios-plugins 需安装nagios-plugins
+wget http://nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz
+tar zxf nagios-plugins-2.0.3.tar.gz 
+cd nagios-plugins-2.0.3
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+make all 
+make installl
+
+安装nrpe
+wget http://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe-2.15/nrpe-2.15.tar.gz
+tar xvf nrpe-2.15.tar.gz
+cd nrpe-2.15
+./configure --with-nrpe-user=nagios \
+			--with-nrpe-group=nagios \
+			--with-nagios-user=nagios \
+			--with-nagios-group=nagios \
+			--enable-command-args \
+			--enable-ssl
+make all
+make install-plugin 
+make install-daemon
+make install-daemon-config 
+
+配置nrpe
+vim /usr/local/nagios/etc/nrpe.cfg 
+
+log_facility=daemon
+pid_file=/var/run/nrpe.pid
+server_port=5666 (端口)			
+server_address=127.0.0.1(被监控主机)
+nrpe_user=nagios
+nrpe_group=nagios			
+allowed_hosts=192.168.126.131(服务器端地址)			
+debug=0			
+command_timeout=60		
+connection_timeout=300
+
+下面还有
+配置允许远程主机监控的对象，格式为command[<command_name>]=<command_line>
+command[check_users]=/usr/local/nagios/libexec/check_users -w 5 -c 10
+command[check_load]=/usr/local/nagios/libexec/check_load -w 15,10,5 -c 30,25,20
+command[check_hda1]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /dev/hda1
+command[check_zombie_procs]=/usr/local/nagios/libexec/check_procs -w 5 -c 10 -s Z
+command[check_total_procs]=/usr/local/nagios/libexec/check_procs -w 150 -c 200 
+
+
+启动nrpe
+/usr/local/nagios/bin/nrpe -c /usr/local/nagios/etc/nrpe.cfg -d
+
+
+为了便于NRPE启动，可以将将NRPE做成开机启动脚本
+vim /etc/init.d/nrped
+#!/bin/bash
+NRPE=/usr/local/nagios/bin/nrpe
+NRPECONF=/usr/local/nagios/etc/nagios.cfg
+
+case "$1" in
+	start)
+		echo -n "Starting NRPE daemon..."
+		$NRPE -c $NRPECONF -d 
+		echo "done"
+		;;
+	stop)
+		echo -n "Stopping NRPE daemon..."
+		pkill -u nagios nrpe  
+		echo "done"
+		;;
+    restart)
+		$0 stop
+		sleep 2
+		$0 start
+		;;
+	*)
+		echo "Usage: $0 start|stop|restart"
+		;;
+esac
+exit 0
+
+或在/etc/xinetd.d目录创建nrpe文件，使其成为一个基于非独立守护进程的服务，文件内容为
+sercice nrpe 
+{
+	flags = REUSE
+	socket_type = stream
+	wait = no
+	user = nagios 
+	group = nagios 
+	server = /opt/nagios/bin/nrpe 
+	server_args = -c /etc/nagios/nrpe.cfg -i 
+	log_on_failure += USERID 
+	disable = no 
+}
+此情况需要重启xinetd来实现
+
+
+被监控端配置完成	
+	
+
+
+配置安装服务器端nrpe
+wget http://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe-2.15/nrpe-2.15.tar.gz
+tar xvf nrpe-2.15.tar.gz
+cd nrpe-2.15
+./configure --with-nrpe-user=nagios \
+			--with-nrpe-group=nagios \
+			--with-nagios-user=nagios \
+			--with-nagios-group=nagios \
+			--enable-command-args \
+			--enable-ssl
+make all
+make install-plugin 	
+
+生成文件
+/usr/local/nagios/libexec/check_nrpe 插件
+验证是否成功(需清iptables -F 和seliunx)
+./libexec/check_nrpe  -H 192.168.126.128
+
+
+定义如何监控远程主机
+定义命令/obgects/command.cfg 
+define command{
+        command_name    check_nrpe
+        command_line    $USER1$/check_nt -H $HOSTADDRESS$ -c $ARG1$
+        }
+
+定义主机(注意 监控主机上的NSClient++的密码要添加上 -s password )
+vim linux.cfg 
+define service{
+        use                     generic-service
+        host_name               linux01
+        service_description     load
+        check_command           check_nrpe!check_load(查看被监控主机/usr/local/nagios/etc/nrpe.cfg)
+        }
+
+启用主机
+vim /nagios/etc/nagios.cfg 
+添加一行
+cfg_file=/usr/local/nagios/etc/objects/linux.cfg
+检查是否有语法错误
+/usr/local/nagios/bin/nagios -v etc/nagios.cfg
+可以到网页查看结果了
+
+监控web服务器
+define service{
+        use                     generic-service
+        host_name               linux01
+        service_description     load
+        check_command           check_httpd
+        }
+
+
+
+
+南7楼
+	
+	
+	
+	
+	
+zabbix
+
+需lamp或lnmp环境	
+wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.4.4/zabbix-2.4.4.tar.gz	
+groupadd zabbix
+useradd -g zabbix zabbix
+tar -zxvf zabbix-2.4.0.tar.gz
+./configure --enable-server --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --with-libxml2
+
+
+
+
+
+汉化zabbix
+确认zabbix已经支持了cn语言：
+[vim /var/www/html/zabbix/include/locales.inc.php 
+'zh_CN' => array('name' => _('Chinese (zh_CN)'),        'display' => true),
+
+在自己的windows电脑找到本地C:\Windows\Fonts\simkai.ttf（楷体）上传到服务器zabbix网站目录fonts目录下。并且修改命名方式（不上传字体会照成乱码）：
+mv simkai.ttf DejaVuSans.ttf
+
+在网页上点击右上角的profile.选择语言为zh-cn
+
+
+	
+http://repo.zabbix.com/zabbix/2.4/rhel/6/x86_64/zabbix-2.4.4-1.el6.x86_64.rpm
+http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.4.4/zabbix-2.4.4.tar.gz
+http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.4.4/zabbix-2.4.4.tar.gz

@@ -1,0 +1,106 @@
+lvs和iptables不能同时使用
+
+ipvsadm(管理集群服务的命令行工具)
+ipvs  (工作在内核)
+
+lvs的类型
+nat network address translation(地址转换)
+dr  direct routing(直接路由)
+tun ip tunneling(隧道)
+
+NAT
+	集群节点跟控制节点必须在同一IP网络中
+	RIP通常是私有地址。仅用于个节点的通信
+	director位于client和real server之间，负责处理所有进出的通信
+	real server必须将网关指向DIP
+	支持端口映射
+	real server可以使用任意OS
+	较大规模应用程序中，director易成为系统瓶颈
+	
+DR
+	集群节点跟控制节点必须在同一物理网络
+	RIP可以不说私有地址，实现便捷的远程管理和监控
+	director仅负责处理入站请求，相应报文则由real server直接发往客户端
+	real server不能将网关指向DIP
+	不支持端口映射
+	
+TUN
+	集群节点可以跨越互联网
+	RIP必须是公网地址
+	director仅负责处理入站请求，相应报文则由real server直接发往客户端
+    real server不能将网关指向DIP
+	只有支持隧道功能的OS才能用于real server 
+	不支持端口映射
+	
+	
+静态调度算法
+	rr 轮询
+	wrr weight 加权
+	sh  source hash 
+	dh  destianation hashing
+	sh  souce hashing 
+	
+动态调度算法	
+	LC 最少连接 l
+	WLC 加权最少连接
+	SED 最短期望延迟
+	NQ  never queue
+	LBLC 基于本地的最少连接
+	LBLCR 基于本地的带复制功能的最少连接
+	
+默认算法 WLC 
+
+
+查看内核中是否支持ipvs
+grep -i 'vs' /boot/config-2.6*
+
+yum install ipvsadm
+
+ipvsadm 
+	管理集群服务
+		添加 -A -t|u|f service-address [-s scheduler]
+				-t tcp协议的集群
+				-u udp协议的集群
+				    service-address ip:port
+				-f 防火墙标记
+					service-address mark number
+		修改 -E
+		删除 -D	-t|u|f service-address
+		
+		eg  ipvsadm -A -t 127.0.0.1:80 -s rr 
+	管理集群服务中的real server 
+		添加 -a -t|u|f service-address -r server-address [-g|i|m] [-w weight]
+					-r server-address real server 的地址
+					-g DR
+					-i TUN
+					-m NAT
+		修改 -e
+		删除 -d	-t|u|f service-address -r server-address
+	
+	eg  ipvsadm -a -t 127.0.0.1:80 -r 127.0.0.1:80 -m 
+	
+	查看 
+		-L|l
+			-n 数字格式显示主机地址
+			--stats 统计数据
+			--rate  显示速率
+			-c  显示连接状况
+			
+	删除集群服务
+		-C 清空ipvs 规则
+	保持规则
+		-S 
+		ipvsadm -s > /path/filename
+		service ipvsadm save
+	重新载入规则
+		-R 
+		ipvsadm -R < /path/filename
+		
+各节点时间偏差不应该超过1秒
+
+ip_forward打开
+echo 1 > /proc/sys/net/ipv4/ip_forard
+
+
+DR 
+

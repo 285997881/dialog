@@ -1,0 +1,47 @@
+MUA 	mail user agent
+	写收信的软件,有 mutt,elm,pine,netscape communicator,outlook express
+	
+MTA		mail transfer agent 
+	有 postfix
+	
+MDA		message delivery agent(邮件投递代理)
+
+
+协议
+SMTP(simple mail transport protocol)
+POP(post office protocol)
+IMAP(internet mail application protocol)
+
+
+postfix工作流程
+接收邮件 -> 邮件入列-> 递送邮件
+
+
+
+接收邮件的处理过程
+
+postdrop接收邮件，存入maildrop/目录
+pickup daemon读取邮件，交由cleanup daemon处理表头，
+处理好后交给incoming queue(收件队列)
+
+转发邮件过程(relay)
+smtpd daemon接收-> clean daemon->incoming queue->MDA
+
+queue manager队列: 收件队列(incoming)，活动队列(active)，延迟队列(deferred)，故障队列(corrupt)
+
+queue manager收件，交由trivial-rewrite决定邮件的路由信息
+
+
+postfix
+
+/etc/postfix/
+	配置文件
+	
+/usr/libexec/postfix/
+	postfix服务程序
+		
+/var/spool/postfix/
+	队列文件
+	
+/usr/sbin/
+	postfix的工具程序

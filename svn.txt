@@ -1,0 +1,49 @@
+svn
+
+subversion（简称svn）是近几年崛起的版本管理软件，是cvs的接班人，
+目前绝大多数开源软件都使用svn作为代码版本管理软件
+
+svn服务器有两种运行方式：独立服务器和借助于apache
+
+svn的基本工作原理： 在一台服务器上建立一个源代码库，库里可以存放许多不同项目的源程序。有源代码库管理员统一管理这些源程序。每个用户在使用源代码库之前，首先要把源代码库里的项目文件下载到本地，然后开发人员可以在本地修改，然后用svn命令进行提交，由源代码库统一管理修改
+
+在 Subversion 中，版本库的数据存储有两种方式，
+一种是在 Berkeley DB 数据库中存放数据；
+另一种是使用普通文件，采用自定义的格式来储存，称为 FSFS
+
+
+安装必须的软件包
+yum install subversion mysql-server httpd mod_dav_svn mod_perl sendmail wget gcc-c++ make unzip perl* ntsysv vim-enhanced
+
+subversion (SVN服务器)
+mysql-server (用于codestriker)
+httpd mod_dav_svn mod_perl (用于支持WEB方式管理SVN服务器)
+sendmail (用于配置用户提交代码后发邮件提醒)
+wget gcc-c++ make unzip perl* (必备软件包)
+ntsysv vim-enhanced (可选)
+
+
+
+新建一个目录用于存储SVN所有文件
+mkdir -p /opt/svn/repos
+
+新建一个版本仓库
+svnadmin create /home/svn/repos
+
+查看一下生成的版本库结构
+$ ls -l /etc/svn/repos
+总用量 56
+drwxrwxr-x  2 robert robert 4096  8月 27 17:27 conf
+drwxrwxr-x  2 robert robert 4096  8月 27 17:27 dav
+drwxrwsr-x  5 robert robert 4096  8月 27 17:27 db
+-r--r--r--  1 robert robert    2  8月 27 17:27 format
+drwxrwxr-x  2 robert robert 4096  8月 27 17:27 hooks
+drwxrwxr-x  2 robert robert 4096  8月 27 17:27 locks
+-rw-rw-r--  1 robert robert  229  8月 27 17:27 README.txt
+
+conf目录下存放了版本库的配置文件，包括用户访问控制和权限控制等内容，文件本身的注释说明十分详细，读者可以根据注释自行配置；
+dav 目录是提供给 Apache 相关模块的目录，目前为空；
+db目录下存放着Subversion所要管理的所有受版本控制的数据，不同的存储方式（Berkeley DB 或者 FSFS）下有着不同的目录结构，不过我们一般不用直接修改和查看这个目录下的内容，Subversion 的命令可以安全的操作这个目录；
+hooks 目录存放着钩子脚本及其模版（一种版本库事件触发程序）
+locks 目录存放着Subversion版本库锁定数据，
+format文件记录了版本库的布局版本号
