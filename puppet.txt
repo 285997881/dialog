@@ -1,0 +1,170 @@
+puppet
+
+操作模型
+部署(安装软件)
+配置语言和资源抽象层(识别环境及配置环境)
+事务层
+	解释和编译配置
+	将编译好的配置同步到agent
+	在agent应用配置
+	向master报告运行结果
+
+http://yum.puppetlabs.com/	
+http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+时间同步
+	
+安装puppet
+yum install ruby ruby-libs ruby-shadow	
+rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+服务器端
+yum install puppet puppet-server facter
+节点端
+yum install puppet facter
+
+debian
+apt-get install ruby libshadow-ruby1.8
+apt-get install puppet puppetmaster facter
+apt-get install puppet facter
+
+配置puppet
+配置文件/etc/puppet/
+puppet.conf  manifests/  ssl/
+
+
+puppet.conf
+
+puppetmasterd --genconfig > puppet.conf	(生成server端文件)
+puppetd --genconfig > puppet.conf	(生产agent端文件)
+
+
+master端
+[main]
+    # The Puppet log directory.
+    # The default value is '$vardir/log'.
+    logdir = /var/log/puppet
+
+    # Where Puppet PID files are kept.
+    # The default value is '$vardir/run'.
+    rundir = /var/run/puppet
+
+    # Where SSL certificates are kept.
+    # The default value is '$confdir/ssl'.
+    ssldir = $vardir/ssl
+
+[master]
+	pluginsync = true  #插件同步
+	reports = log, foreman	#报告发送到log 和 foreman
+	environment = prosuction	#指定运行环境为生产环境
+	certname = server.domain.com	# 配置主机名
+
+
+agent端
+[main]
+    # The Puppet log directory.
+    # The default value is '$vardir/log'.
+    logdir = /var/log/puppet
+
+    # Where Puppet PID files are kept.
+    # The default value is '$vardir/run'.
+    rundir = /var/run/puppet
+
+    # Where SSL certificates are kept.
+    # The default value is '$confdir/ssl'.
+    ssldir = $vardir/ssl
+	pluginsync = true
+
+[agent]
+    # The file in which puppetd stores a list of the classes
+    # associated with the retrieved configuratiion.  Can be loaded in
+    # the separate ``puppet`` executable using the ``--loadclasses``
+    # option.
+    # The default value is '$confdir/classes.txt'.
+    classfile = $vardir/classes.txt
+
+    # Where puppetd caches the local configuration.  An
+    # extension indicating the cache format is added automatically.
+    # The default value is '$confdir/localconfig'.
+    localconfig = $vardir/localconfig
+	
+	runinterval = 1800	#检测时长1800秒，30分钟
+	listen = true		#监听进程
+	report = true		#发送报告
+	server = puppet.domain.com	#指定master地址
+	
+	
+manifests/site.pp  (没有此文件，puppet将拒绝启动)
+生产site.pp
+puppet apply --genmanifest > /etc/puppet/manifests/site.pp
+
+puppet master 运行在TCP的8140端口
+
+
+
+启动puppet master
+service puppetmaster start
+puppet master --verbose --no-daemonize
+	--verbose(向master输出详细的日志)
+	--no-daemonize(master进程运行在前台并将输出重定向到标准输出)
+
+
+出现错误`initialize': Permission denied - /var/lib/puppet/run/master.pid (Errno::EACCES)
+解决：chown -R puppet /var/lib/puppet/ 
+	
+Could not run: Could not create PID file: /var/lib/puppet/run/master.pid 
+# ps -aux | grep puppet
+应该能看到相应的进程。如果以daemonize的方式启动，当然不能再以no-daemonize 的方式启动了，杀死该进程重启。
+
+
+启动puppet，会初始化puppet环境，创建一个本地认证中心,同时创建master相关的证书和秘钥(ssl/)
+
+
+
+agent连接puppet master
+puppet agent --server=puppetmaster --no-daemonize --verbose
+	--server(puppet服务器的地址)
+	--verbose(向master输出详细的日志)
+	--no-daemonize(master进程运行在前台并将输出重定向到标准输出)
+	
+	
+master端签发证书
+puppet cert --list (查看待签发的证书)
+
+puppet cert --sign node1 (签发node1的证书)
+puppet cert --sign --all (签发所有证书)
+
+回到node节点，重新启动服务
+puppet agent --server=puppetmaster --no-daemonize --verbose
+
+
+错误err: Could not retrieve catalog from remote server: SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed: [certificate is not yet valid for /CN=Puppet CA: master.puppet.chang]
+notice: Using cached catalog
+err: Could not retrieve catalog; skipping run
+err: Could not send report: SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed: [certificate is not yet valid for /CN=Puppet CA: master.puppet.chang]
+
+解决方法：两台机器时间同步
+
+
+
+
+
+模板
+cd /etc/puppet/modules
+mkdir -p ssh/{manifests,templates,files}
+touch ssh /manifests/init.pp
+
+从puppetlab获取模块
+https://forge.puppetlabs.com/puppetlabs
+puppet module install puppetlabs-ntp
+
+
+
+puppet dashboard
+可以作为ENC和一个报告工具
+dashboard需要ruby和mysql
+
+yum install mysql mysql-devel mysql-server ruby ruby-devel ruby-irb ruby-mysql ruby-rdoc ruby-ri
+
+
+
+foreman
+着眼于配置和数据中心管理
