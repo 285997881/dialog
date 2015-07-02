@@ -1,0 +1,111 @@
+memcached 缓存服务器
+
+http://memcached.org/
+
+http://memcached.org/files/memcached-1.4.24.tar.gz
+
+
+libevent
+
+memcached
+	-l	监听的IP地址
+	-p	tcp port 11211
+	-m	指定可用的最大内存
+	-u	指定运行的用户
+	-d	以服务模型运行
+	-c	支持的最大并发数，默认为1204
+	
+
+#!/bin/bash
+#
+# Init file for memcached
+#
+# Written by Dag Wieers <dag@wieers.com>
+#
+# chkconfig: - 80 12
+# description: Distributed memory caching daemon
+#
+# processname: memcached
+## config: /etc/sysconfig/memcached
+## config: /etc/memcached.conf
+# config: /usr/local/memcached/memcached.conf
+# pidfile: /var/run/memcached.pid
+
+source /etc/init.d/functions
+
+### Default variables
+PORT="11211"
+USER="memcached"
+MAXCONN="2048"
+CACHESIZE="64"
+OPTIONS=""
+
+#BIN="/usr/local/bin"
+BIN="/usr/local/memcached/bin"
+SYSCONFIG="/usr/local/memcached/memcached.conf"
+
+### Read configuration
+[ -r "$SYSCONFIG" ] && source "$SYSCONFIG"
+
+RETVAL=0
+prog="memcached"
+desc="Distributed memory caching"
+
+start() {
+        echo -n $"Starting $desc ($prog) on port $PORT: "
+        daemon $BIN/$prog -d -p $PORT -u $USER -c $MAXCONN -m $CACHESIZE $OPTIONS
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+        return $RETVAL
+}
+
+stop() {
+        echo -n $"Shutting down $desc ($prog): "
+        kill `ps -aef | grep $PORT | grep -v grep | awk '{print $2}'` > /dev/null 2>&1
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+        return $RETVAL
+}
+
+restart() {
+        stop
+        start
+}
+
+reload() {
+        echo -n $"Reloading $desc ($prog): "
+        killproc $prog -HUP
+        RETVAL=$?
+        echo
+        return $RETVAL
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  condrestart)
+        [ -e /var/lock/subsys/$prog ] && restart
+        RETVAL=$?
+        ;;
+  reload)
+        reload
+        ;;
+  status)
+        status $prog
+        RETVAL=$?
+        ;;
+   *)
+        echo $"Usage: $0 {start|stop|restart|condrestart|status}"
+        RETVAL=1
+esac
+
+exit $RETVAL

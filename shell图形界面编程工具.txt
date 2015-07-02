@@ -1,0 +1,6 @@
+shell图形界面编程工具
+dialig
+/usr/share/doc/dialog/sample/下有各中框体的使用示例,可以通过查看脚本示例熟悉功能来使用
+
+zenity
+Shoes
