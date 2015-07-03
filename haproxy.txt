@@ -1,0 +1,154 @@
+haproxy	(The Reliable, High Performance TCP/HTTP Load Balancer)
+
+是一款高性能的反向代理软件，它可以基于四层或七层进行反向代理，尤其适合于高负载且需要进行七层处理的 Web 站点。
+
+http://www.haproxy.org/
+
+http://www.haproxy.org/download/1.5/src/haproxy-1.5.12.tar.gz
+
+HAProxy 主要有1.5，1.4和1.3三个版本。CentOS 6的EPEL源中已经加入了HAProxy的RPM包
+
+性能
+HAproxy主要借助于现代操作系统上几种常见的技术来实现性能的最大化。
+
+单进程、事件驱动模型，降低了上下文切换和内存的开销
+O(1)事件检查器，允许其在高并发连接中对任何连接的事件实现及时探测。
+单缓冲（single buffering）机制能以不复制任何数据的方式完成读写操作，借助 splice() 系统调用，可以实现零复制转发。
+树型存储，使用弹性二叉树，实现O(log(N))的低开销
+
+在生产环境中，通常将HAProxy作为七层负载均衡器，实现 Web 集群的负载均衡，动静分离等功能。
+
+评估负载均衡器的性能
+	会话率
+	会话并发率
+	数据率
+
+yuminstall haproxy 
+
+配置 HAProxy
+/etc/haproxy/haproxy.cfg		
+包括
+global settings
+proxy settings(如default，listen，frontend和backend)
+	default：用于为所有其它配置段提供默认参数
+	frontend：用于定义一系列监听的套接字，这些套接字可接受客户端请求并与之建立连接
+	backend：用于定义一系列后端服务器，代理将会将对应客户端的请求转发至这些服务器
+	listen： 通过关联前端和后端定义了一个完整的代理
+
+	
+balance <algorithm> [ <arguments> ]	
+	定义负载均衡算法，可用于“defaults”、“listen” 和 “backend”。用于在负载均衡场景中挑选一个server，其仅应用于持久信息不可用的条件下或需要将一个连接重新派发至另一个服务器时。支持的算法有：	
+		roundrobin：基于权重进行轮叫，在服务器的处理时间保持均匀分布时，这是最平衡、最公平的算法。此算法是动态的，这表示其权重可以在运行时进行调整，不过，在设计上，每个后端服务器仅能最多接受4128个连接
+		static-rr：基于权重进行轮叫，与roundrobin类似，但是为静态方法，在运行时调整其服务器权重不会生效；不过，其在后端服务器连接数上没有限制
+		leastconn：新的连接请求被派发至具有最少连接数目的后端服务器；在有着较长时间会话的场景中推荐使用此算法，如LDAP、SQL等，其并不太适用于较短会话的应用层协议，如HTTP；此算法是动态的，可以在运行时调整其权重
+		source：将请求的源地址进行hash运算，并由后端服务器的权重总数相除后派发至某匹配的服务器；这可以使得同一个客户端IP的请求始终被派发至某特定的服务器；不过，当服务器权重总数发生变化时，如某服务器宕机或添加了新的服务器，许多客户端的请求可能会被派发至与此前请求不同的服务器；常用于负载均衡无cookie功能的基于TCP的协议；其默认为静态，不过也可以使用hash-type修改此特性
+		uri：对URI的左半部分("?"标记之前的部分)或整个URI进行hash运算，并由服务器的总权重相除后派发至某匹配的服务器；这可以使得对同一个URI的请求总是被派发至某特定的服务器，除非服务器的权重总数发生了变化；此算法常用于代理缓存或反病毒代理以提高缓存的命中率；需要注意的是，此算法仅应用于HTTP后端服务器场景；其默认为静态算法，不过也可以使用hash-type修改此特性
+
+		url_param：通过为URL指定的参数在每个HTTP GET请求中将会被检索；如果找到了指定的参数且其通过等于号“=”被赋予了一个值，那么此值将被执行hash运算并被服务器的总权重相除后派发至某匹配的服务器；此算法可以通过追踪请求中的用户标识进而确保同一个用户ID的请求将被送往同一个特定的服务器，除非服务器的总权重发生了变化；如果某请求中没有出现指定的参数或其没有有效值，则使用轮叫算法对相应请求进行调度；此算法默认为静态的，不过其也可以使用hash-type修改此特性
+		hdr()：对于每个HTTP请求，通过指定的HTTP首部将会被检索；如果相应的首部没有出现或其没有有效值，则使用轮叫算法对相应请求进行调度；其有一个可选选项“use_domain_only”，可在指定检索类似Host类的首部时仅计算域名部分(比如通过www.magedu.com来说，仅计算magedu字符串的hash值)以降低hash算法的运算量；此算法默认为静态的，不过其也可以使用hash-type修改此特性
+
+		
+bind [<address>]:<port_range> [, ...]  	#端口指定
+	此指令仅能用于frontend和listen区段，用于定义一个或几个监听的套接字。
+	
+mode {tcp|http|health}		#工作模式
+	设定实例的运行模式或协议。当实现内容交换时，前端和后端必须工作于同一种模式(一般说来都是HTTP模式)，否则将无法启动实例。
+
+use_backend <backend> <if | unless> <condition>
+用于指定匹配某 condition 时使用的后端主机
+default_backend <backend>  
+指定默认情况下的后端主机
+例：
+	use_backend     dynamic  if  url_dyn
+	use_backend     static   if  url_css url_img extension_img
+	default_backend dynamic
+	
+	
+server <name> <address>[:port] [param*]
+为后端声明一个主机，不能用于 default 和 frontend 段
+name：为此服务器指定的内部名称，其将出现在日志及警告信息中；如果设定了"http-send-server-name"，它还将被添加至发往此服务器的请求首部中
+address：此服务器的地址
+[:port]：指定将连接请求所发往的此服务器时的目标端口
+[param]：为此服务器设定的一系参数，下面仅说明几个常用的参数：
+	backup：设定为备用服务器，仅在负载均衡场景中的其它server均不可用于启用此server
+	check：启动对此server执行健康状态检查，其可以借助于额外的其它参数完成更精细的设定
+	cookie ：为指定server设定cookie值，此处指定的值将在请求入站时被检查，第一次为此值挑选的server将在后续的请求中被选中，其目的在于实现持久连接的功能
+	maxconn：指定此服务器接受的最大并发连接数；如果发往此服务器的连接数目高于此处指定的值，其将被放置于请求队列，以等待其它连接被释放
+	maxqueue：设定请求队列的最大长度
+	observe：通过观察服务器的通信状况来判定其健康状态，默认为禁用，其支持的类型有“layer4”和“layer7”，“layer7”仅能用于http代理场景
+	weight：权重，默认为1，最大值为256，0表示不参与负载均衡
+	
+	
+hash-type <method>	
+	用于定义将hash码映射至后端服务器的方法,不能用于frontend区段，可用方法有map-based和consistent，大多数情况下推荐使用默认的map-based
+		map-based：hash表是一个包含了所有在线服务器的静态数组。其hash值将会非常平滑，会将权重考虑在列，但其为静态方法，当一台服务器宕机或添加了一台新的服务器时，大多数连接将会被重新派发至一个与此前不同的服务器上，对于缓存服务器的工作场景来说，此方法不甚适用。
+		consistent：hash表是一个由各服务器填充而成的树状结构；基于hash键在hash树中查找相应的服务器时，最近的服务器将被选中。此方法是动态的，添加一个新的服务器时，仅会对一小部分请求产生影响，因此，尤其适用于后端服务器为cache的场景。
+
+log
+			log global
+			
+	
+HAProxy中,涉及时间单位的配置参数的默认后缀一般是毫秒,也可以使用s(秒),m(分钟),h(小时),d(天)等单位
+
+
+global
+    #    local2.*                       /var/log/haproxy.log
+    log         127.0.0.1 local2
+    chroot      /var/lib/haproxy	#修改HAProxy的工作目录至指定的目录并在放弃权限之前执行chroot() 操作,可以提升haproxy的安全级别
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000		#每个HAProxy进程所接受的最大并发连接数
+    user        haproxy
+    group       haproxy
+    daemon		#以守护进程方式运行
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http		#反向代理的服务
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+#---------------------------------------------------------------------
+# main frontend which proxys to the backends
+#---------------------------------------------------------------------
+frontend  main *:5000
+    acl url_static       path_beg       -i /static /images /javascript /stylesheets
+    acl url_static       path_end       -i .jpg .gif .png .css .js
+
+    use_backend static          if url_static
+    default_backend             app
+
+#---------------------------------------------------------------------
+# static backend for serving up images, stylesheets and such
+#---------------------------------------------------------------------
+backend static
+    balance     roundrobin
+    server      static 127.0.0.1:4331 check
+
+#---------------------------------------------------------------------
+# round robin balancing between the various backends
+#---------------------------------------------------------------------
+backend app
+    balance     roundrobin
+    server  app1 127.0.0.1:5001 check
+    server  app2 127.0.0.1:5002 check
+    server  app3 127.0.0.1:5003 check
+    server  app4 127.0.0.1:5004 check
