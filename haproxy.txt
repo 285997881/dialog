@@ -23,7 +23,7 @@ O(1)事件检查器，允许其在高并发连接中对任何连接的事件实�
 	会话并发率
 	数据率
 
-yuminstall haproxy 
+yum install haproxy 
 
 配置 HAProxy
 /etc/haproxy/haproxy.cfg		
