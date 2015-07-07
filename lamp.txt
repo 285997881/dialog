@@ -1,0 +1,69 @@
+yum install php-mysql
+
+zend
+	第一段：词法分析、语法分析、编译为opcode
+		opcode放在内存中
+	第二段：执行opcode
+	
+php缓存器
+	APC
+	eAccelerator
+	XCache
+		
+php与mysql交互
+	php-mysql
+	
+httpd与php交互
+	CGI
+	module
+	fastcgj
+
+	
+LAMP
+	
+http://www.apache.org/
+
+httpd
+http://httpd.apache.org/
+http://mirror.bit.edu.cn/apache//httpd/httpd-2.4.12.tar.bz2
+
+php
+http://php.net/
+http://cn2.php.net/get/php-5.6.10.tar.bz2/from/this/mirror
+
+mysql 
+https://www.mysql.com/
+http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-5.6.25-1.el6.x86_64.rpm-bundle.tar
+
+
+安装次序
+httpd--mysql--php--xcache
+
+yum grouplist
+
+httpd
+
+安装次序 
+apr--apr-util--httpd 
+
+apr (apache portable runtime)	https://apr.apache.org/
+apr-util
+http://mirrors.cnnic.cn/apache//apr/apr-1.5.2.tar.gz
+http://mirrors.cnnic.cn/apache//apr/apr-util-1.5.4.tar.gz
+
+tar xvf apr-1.5.2.tar.gz
+cd apr-1.5.2
+./configure --prefix=/usr/local/apr 
+make && make install
+
+tar xvf apr-util-1.5.4.tar.gz
+cd apr-util-1.5.4
+./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr 
+make && make install
+
+
+
+--enable-so
+--enable-ssl
+--enable-proxy-fcgi
+--enable-rewrite

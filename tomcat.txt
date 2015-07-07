@@ -1,0 +1,89 @@
+tomcat
+是由Apache软件基金会下属的Jakarta项目开发的一个Servlet容器，按照Sun Microsystems提供的技术规范，实现了对Servlet和JavaServer Page（JSP）的支持，并提供了作为Web服务器的一些特有功能，如Tomcat管理和控制平台、安全域管理和Tomcat阀等。由于Tomcat本身也内含了一个HTTP服务器，它也可以被视作一个单独的Web服务器。
+
+Tomcat提供了一个Jasper编译器用以将JSP编译成对应的Servlet。
+
+Tomcat的Servlet引擎通常与Apache或者其他Web服务器一起工作。除了用于开发过程中的调试以及那些对速度和事务处理只有很小要求的用户，很少会将Tomcat单独作为Web服务器。但随着版本的更新，正有越来越多的用户将其单独作为Web服务器用以那些对速度和可靠性有较高要求的环境中。
+
+http://tomcat.apache.org/
+
+http://mirrors.cnnic.cn/apache/tomcat/tomcat-8/v8.0.23/bin/apache-tomcat-8.0.23.tar.gz
+http://apache.fayea.com/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz
+http://mirrors.cnnic.cn/apache/tomcat/tomcat-6/v6.0.44/bin/apache-tomcat-6.0.44.tar.gz
+
+前端请求被tomcat直接接收或者由前端的代理，通过HTTP，或者AJP代理给Tomcat，此时请求被tomcat中的connector接收，不同的connector和Engine被service组件关联起来，在一个Engine中由Host容器定义了许多的虚拟主机，每一个Host容器代表一个主机。在各自的Host中，又可以定义多个Context，用此来定义一个虚拟主机中的多个独立的应用程序。
+
+conf/server.xml
+<server  />
+	<service  />
+		<connector  />
+		<engine  />
+			<host />
+				<context  />
+
+ 				
+事先需安装java并配置java环境变量
+vim /etc/profile.d/java.sh
+export JAVA_HOME=/usr/java/jdk
+export PATH=$PATH:$JAVA_HOME/bin
+解压tomcat程序
+tar xvf apache-tomcat-8.0.23.tar.gz /usr/local/tomcat
+配置tomcat环境变量
+vim /etc/profile.d/tomcat.sh
+export CATALINA_HOME=/usr/local/tomcat	
+export PATH=$PATH:$CATALINA_HOME/bin 	
+
+
+tomcat的目录结构
+	bin		存放启动和关闭tomcat脚本
+	conf	包含不同的配置文件,server.xml(Tomcat的主要配置文件)和web.xml
+	work	存放jsp编译后产生的class文件
+	webapp	存放应用程序示例，以后你要部署的应用程序也要放到此目录
+	logs	存放日志文件
+	lib/japser/common	这三个目录主要存放tomcat所需的jar文件	
+	
+	
+	运行
+设置完毕后就可以运行tomcat服务器了，进入tomcat的bin目录，用startup.sh，相应的关闭tomcat的命令为shutdown和shutdown.sh。或catalina.sh start|stop
+
+启动后可以在浏览器中输入http://localhost:8080/测试，
+
+
+
+server.xml配置简介
+
+元素名
+server	
+	port	指定一个端口，这个端口负责监听关闭tomcat的请求
+	shutdown	指定向端口发送的命令字符串
+service	
+	name	指定service的名字
+Connector(表示客户端和service之间的连接)	
+	port	指定服务器端要创建的端口号，并在这个断口监听来自客户端的请求
+	minProcessors	服务器启动时创建的处理请求的线程数
+	maxProcessors	最大可以创建的处理请求的线程数
+	enableLookups	如果为true，则可以通过调用request.getRemoteHost()进行DNS查询来得到远程客户端的实际主机名，若为false则不进行DNS查询，而是返回其ip地址
+	redirectPort	指定服务器正在处理http请求时收到了一个SSL传输请求后重定向的端口号
+	acceptCount	指定当所有可以使用的处理请求的线程数都被使用时，可以放到处理队列中的请求数，超过这个数的请求将不予处理
+	connectionTimeout	指定超时的时间数(以毫秒为单位)
+Engine(表示指定service中的请求处理机，接收和处理来自Connector的请求)	
+	defaultHost	指定缺省的处理请求的主机名，它至少与其中的一个host元素的name属性值是一样的
+Context(表示一个web应用程序，通常为WAR文件，关于WAR的具体信息见servlet规范)	
+	docBase	应用程序的路径或者是WAR文件存放的路径
+	path	表示此web应用程序的url的前缀，这样请求的url为http://localhost:8080/path/****
+	reloadable	这个属性非常重要，如果为true，则tomcat会自动检测应用程序的/WEB-INF/lib 和/WEB-INF/classes目录的变化，自动装载新的应用程序，我们可以在不重起tomcat的情况下改变应用程序
+host(表示一个虚拟主机)
+	name	指定主机名
+	appBase	应用程序基本目录，即存放应用程序的目录
+	unpackWARs	如果为true，则tomcat会自动将WAR文件解压，否则不解压，直接从WAR文件中运行应用程序
+Logger(表示日志，调试和错误信息)
+	className	指定logger使用的类名，此类必须实现org.apache.catalina.Logger 接口
+	prefix	指定log文件的前缀
+	suffix	指定log文件的后缀
+	timestamp	如果为true，则log文件名中要加入时间，如下例:localhost_log.2001-10-04.txt
+Realm(表示存放用户名，密码及role的数据库)
+	className	指定Realm使用的类名，此类必须实现org.apache.catalina.Realm接口
+Valve(功能与Logger差不多，其prefix和suffix属性解释和Logger 中的一样)
+	className指定Valve使用的类名，如用org.apache.catalina.valves.AccessLogValve类可以记录应用程序的访问信息
+	directory	指定log文件存放的位置
+	pattern	有两个值，common方式记录远程主机名或ip地址，用户名，日期，第一行请求的字符串，HTTP响应代码，发送的字节数。combined方式比common方式记录的值更多

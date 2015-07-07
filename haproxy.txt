@@ -54,29 +54,44 @@ bind [<address>]:<port_range> [, ...]  	#端口指定
 mode {tcp|http|health}		#工作模式
 	设定实例的运行模式或协议。当实现内容交换时，前端和后端必须工作于同一种模式(一般说来都是HTTP模式)，否则将无法启动实例。
 
+	
+option httpchk [method] [uri] [version]	
+	健康状态检查,默认情况下，HAProxy 的后端主机健康状态检查是基于 TCP 连接来检查的。当使用 option httpchk 后，将使用一个 HTTP 请求来检查后端主机健康状态，2xx 和 3xx 的响应码表示健康状态，其他响应码或无响应表示服务器故障。
+
+	
+http-check disable-on-404
+	使用此选项后，返回 HTTP 404 状态码的后端主机将会从负载均衡列表中移除，但是仍能够继续处理已建立的连接。这可以用于手动的平滑下限。如果服务器重新开始返回 2xx 或 3xx 的状态码，将会重新被加入至负载均衡主机列表。	
+	
+	
+http-check expect [!] <match> <pattern>
+	此选项用于对 HTTP 检查返回的页面进行内容匹配或返回状态码匹配
+	match 指定匹配方式，status 表示精确匹配状态码，rstatus 表示使用正则表达式匹配状态码，string 表示精确匹配响应实体字符串，rstring 表示使用正则表达式匹配响应实体。同时还可以使用 "!" 表示取反，如 ! status，返回内容的大小受 tune.chksize 参数限制，默认为 16384 字节。	
+	
+	
+	
 use_backend <backend> <if | unless> <condition>
-用于指定匹配某 condition 时使用的后端主机
+	用于指定匹配某 condition 时使用的后端主机
 default_backend <backend>  
-指定默认情况下的后端主机
-例：
+	指定默认情况下的后端主机
+	例：
 	use_backend     dynamic  if  url_dyn
 	use_backend     static   if  url_css url_img extension_img
 	default_backend dynamic
 	
 	
 server <name> <address>[:port] [param*]
-为后端声明一个主机，不能用于 default 和 frontend 段
-name：为此服务器指定的内部名称，其将出现在日志及警告信息中；如果设定了"http-send-server-name"，它还将被添加至发往此服务器的请求首部中
-address：此服务器的地址
-[:port]：指定将连接请求所发往的此服务器时的目标端口
-[param]：为此服务器设定的一系参数，下面仅说明几个常用的参数：
-	backup：设定为备用服务器，仅在负载均衡场景中的其它server均不可用于启用此server
-	check：启动对此server执行健康状态检查，其可以借助于额外的其它参数完成更精细的设定
-	cookie ：为指定server设定cookie值，此处指定的值将在请求入站时被检查，第一次为此值挑选的server将在后续的请求中被选中，其目的在于实现持久连接的功能
-	maxconn：指定此服务器接受的最大并发连接数；如果发往此服务器的连接数目高于此处指定的值，其将被放置于请求队列，以等待其它连接被释放
-	maxqueue：设定请求队列的最大长度
-	observe：通过观察服务器的通信状况来判定其健康状态，默认为禁用，其支持的类型有“layer4”和“layer7”，“layer7”仅能用于http代理场景
-	weight：权重，默认为1，最大值为256，0表示不参与负载均衡
+	为后端声明一个主机，不能用于 default 和 frontend 段
+	name：为此服务器指定的内部名称，其将出现在日志及警告信息中；如果设定了"http-send-server-name"，它还将被添加至发往此服务器的请求首部中
+		address：此服务器的地址
+		[:port]：指定将连接请求所发往的此服务器时的目标端口
+		[param]：为此服务器设定的一系参数，下面仅说明几个常用的参数：
+			backup：设定为备用服务器，仅在负载均衡场景中的其它server均不可用于启用此server
+			check：启动对此server执行健康状态检查，其可以借助于额外的其它参数完成更精细的设定
+			cookie ：为指定server设定cookie值，此处指定的值将在请求入站时被检查，第一次为此值挑选的server将在后续的请求中被选中，其目的在于实现持久连接的功能
+			maxconn：指定此服务器接受的最大并发连接数；如果发往此服务器的连接数目高于此处指定的值，其将被放置于请求队列，以等待其它连接被释放
+			maxqueue：设定请求队列的最大长度
+			observe：通过观察服务器的通信状况来判定其健康状态，默认为禁用，其支持的类型有“layer4”和“layer7”，“layer7”仅能用于http代理场景
+			weight：权重，默认为1，最大值为256，0表示不参与负载均衡
 	
 	
 hash-type <method>	
@@ -85,10 +100,27 @@ hash-type <method>
 		consistent：hash表是一个由各服务器填充而成的树状结构；基于hash键在hash树中查找相应的服务器时，最近的服务器将被选中。此方法是动态的，添加一个新的服务器时，仅会对一小部分请求产生影响，因此，尤其适用于后端服务器为cache的场景。
 
 log
-			log global
-			
+
+log global
+
+option httplog
+	启用记录HTTP请求、会话状态和计时器的功能
+
+option logasap
+	启用或禁用提前将 HTTP 请求记入日志，而不等待 HTTP 报文传输完毕
+
+option forwardfor
+	在发往服务器的请求中插入 X-Forwarded-For 首部用于记录客户端的 IP		
+	
+	
+	
+	
+	
 	
 HAProxy中,涉及时间单位的配置参数的默认后缀一般是毫秒,也可以使用s(秒),m(分钟),h(小时),d(天)等单位
+
+
+
 
 
 global
@@ -152,3 +184,90 @@ backend app
     server  app2 127.0.0.1:5002 check
     server  app3 127.0.0.1:5003 check
     server  app4 127.0.0.1:5004 check
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+示例
+global
+    log         127.0.0.1 local2
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 30000
+
+listen stats
+    mode http
+    bind 0.0.0.0:1080
+    stats enable
+    stats hide-version
+    stats uri     /haproxyadmin?stats
+    stats realm   Haproxy\ Statistics
+    stats auth    admin:admin
+    stats admin if TRUE
+
+frontend http-in
+    bind *:80
+    mode http
+    log global
+    option httpclose
+    option logasap
+    option dontlognull
+    acl url_static       path_beg       -i /static /images /javascript /stylesheets
+    acl url_static       path_end       -i .jpg .jpeg .gif .png .css .js
+
+    use_backend static_servers          if url_static
+    default_backend dynamic_servers
+
+backend static_servers
+    balance roundrobin
+    server imgsrv1 172.16.200.7:80 check maxconn 6000
+    server imgsrv2 172.16.200.8:80 check maxconn 6000
+
+backend dynamic_servers
+    cookie srv insert nocache
+    balance roundrobin
+    server websrv1 172.16.200.7:80 check maxconn 1000 cookie websrv1
+    server websrv2 172.16.200.8:80 check maxconn 1000 cookie websrv2
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

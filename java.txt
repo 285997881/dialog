@@ -1,0 +1,71 @@
+java	拥有跨平台、面向对象、泛型编程的特性，广泛应用于企业级Web应用开发和移动应用开发。
+
+最初被命名为Oak,于1995年5月以Java的名称正式发布,实现了“一次编写，到处运行(write once ,run anywhere)”的跨平台特性。
+
+java 包括四个独立又相关的技术
+	java语言
+	java API
+	java class 文件格式
+	JVM(jave virtual machine)
+	
+	
+JVM的实现方式
+	一次性解释
+	及时编译器(just0in0time complier)	依赖于内存缓存解释结果
+	自适应编译器	缓存常用的20%的代码
+	
+hotspot
+	jre java 运行时环境
+	jdk	java 开发环境
+openjdk
+	
+JDK=java+api+jvm 是实现java开发的最小环境
+JRE=jvm+java SE api
+
+根据应用领域，java分为三类
+	java se standard edtion			J2SE
+	java ee enterprise edition		J2EE
+	java me mobile edition			J2ME
+	
+	
+	
+	
+applet java 类		可开发网站
+servlet CGI
+jsp java server page  
+
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
+	
+
+	
+配置java环境变量
+JAVA_HOME=/usr/java/jdk1.
+PATH=$PATH:$JAVA_HOME/bin
+
+
+java -XX:+<option> 	开启参数指定的功能
+	 -XX:-<option>	关闭功能
+	 -XX:<option>=<value>	给option指定选项赋值
+	 
+java -XX:+PrintFlagsFinal	显示所有的参数
+
+jdk监控和故障处理工具
+jps jvm process status tool	显示指定系统内所有的hotspot虚拟机进程的列表
+jstat jvm statistics monitoring tool  收集并显示hotspot虚拟机各方面的运行数据
+jinfo 显示hotspot虚拟机配置信息
+jmap 生成某hotpot虚拟机的内存转储快照
+
+可视化工具
+jconsole	java的控制与管理控制台
+jvisualvm
+
+
+
+java eeapplication servers
+websphere
+weblogic
+oc4j
+Jbosss
+jOnAs
+geronimo
+glassfish
