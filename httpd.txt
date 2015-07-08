@@ -1,0 +1,148 @@
+http  hypertext transfer protocol
+
+html  hypertext mark language
+
+uri		uniform resource indentifies
+
+url  uniform resource location
+
+http/1.0
+
+mime  multipurpose internet mail extension
+
+状态代码
+1XX		纯信息
+2XX		成功类信息(200)
+3XX		重定向信息(301 302 304)
+4XX		客户端错误
+5XX		服务器端错误
+
+
+应用程序服务器
+iis
+tomcat
+websphere(ibm,jsp,commodity)
+weblogic(oracle(bea),jsp)
+jboss(redhat)
+
+
+
+apache   httpd
+
+ASF	apache software foundation
+
+http://httpd.apache.org/
+http://mirrors.hust.edu.cn/apache//httpd/httpd-2.4.12.tar.bz2
+http://mirrors.hust.edu.cn/apache//httpd/httpd-2.2.29.tar.gz
+
+socker  ip:port
+
+虚拟主机
+	基于IP的虚拟主机
+	基于端口的虚拟主机
+	基于域名的虚拟主机
+	
+cgi(common gateway interface)	
+	
+	
+elinks	
+
+httpd
+	/usr/sbin/httpd(MPM)
+	/etc/rc.d/init.d/httpd
+	/etc/httpd/conf/httpd.conf
+	/etc/httpd/conf.d
+	/var/www/
+			html
+			cgi-bin
+			
+			
+MPM  (multi path modules)多(路)处理模块
+httpd响应用户请求的方法
+	Netware	mpm_netware
+	OS/2	mpmt_os2
+	Unix	prefork，worker 或 event，取决于平台特性
+	Windows	mpm_winnt
+	
+	
+prefork, worker, event 三种模式的区别：
+	prefork 中没有线程的概念，是多进程模型，一个进程处理一个连接；稳定；响应快。其缺点是在连接数比较大时就非常消耗内存。
+	worker 是多进程多线程模型，一个进程有多个线程，每个线程处理一个连接。与prefork相比，worker模式更节省系统的内存资源。不过，需要注意worker模式下的Apache与php等程序模块的兼容性。
+	event 是worker模式的变种，它把服务进程从连接中分离出来,在开启KeepAlive场合下相对worker模式能够承受的了更高的并发负载。event模式不能很好的支持https的访问（HTTP认证相关的问题）。
+	
+	
+查看和更改正在使用的MPM	
+httpd -l
+apache2ctl -l(ubuntu)
+
+MPM的位置
+/usr/sbin/httpd.event -l
+/usr/sbin/httpd.worker -l
+
+修改MPM
+/etc/sysconfig/httpd 
+HTTPD=/usr/sbin/httpd.worker 取消注释
+
+在Apache编译时，做configure这一步，可以加上”–with-mpm=event”来将event编译作为MPM编译进去，同样也可以选择prefork和worker。另外，也可以将多个MPM编译为共享模块，configure中的参数为：–enable-mpms-shared=MPM-LIST （如：–enable-mpms-shared=’prefork worker’， –enable-mpms-shared=all）。
+
+
+
+
+DocumentRoot ""
+<Directory "">
+	Options (Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews)
+	Order allow,deny
+	Allow from all
+	
+	AllowOverride AuthConfig
+	AuthType Basic
+	AuthName "Password Required"
+	AuthUserFile /www/passwords/password.file
+	AuthGroupFile /www/passwords/group.file
+	Require Group admingroup(vaild-user)
+</Directory>
+Options(允许的操作)(Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews)
+	None | All
+	Indexes (以目录形式显示网站信息)
+	FollowSymLinks (如果文件是符号链接，允许访问)
+	Includes(允许执行服务器端包含(ssl))
+	SymLinksifOwnerMatch
+	ExecCGI(允许cgi脚本)
+	MultiViews(多功能视图)
+	
+	
+	
+AllowOverride
+	通常利用Apache的rewrite模块对 URL 进行重写的时候， rewrite规则会写在 .htaccess 文件里。但要使 apache 能够正常的读取.htaccess 文件的内容，就必须对.htaccess 所在目录进行配置
+	AllowOverride参数就是指明Apache服务器是否去找.htacess文件作为配置文件，如果设置为none,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型. 
+	
+	选项option	FileInfo	AuthConfig 	Limit
+		ALL | None
+		AuthConfig  允许使用所有的权限指令，他们包括AuthDBMGroupFile AuthDBMUserFile  AuthGroupFile  AuthName AuthTypeAuthUserFile和Require
+		
+		FileInfo    允许使用文件控制类型的指令。它们包括AddEncoding AddLanguage  AddType  DEfaultType ErrorDocument LanguagePriority
+		
+		Indexes     允许使用目录控制类型的指令。它们包括AddDescription  AddIcon 
+		AddIconByEncoding AddIconByType  DefaultIcon  DirectoryIndex  FancyIndexing  HeaderName 
+		IndexIgnore  IndexOptions ReadmeName
+		
+		Limit       允许使用权限控制指令。它们包括Allow Deny和Order
+		
+		Options     允许使用控制目录特征的指令.他们包括Options 和XBitHack
+	
+AllowOverride AuthConfig	
+AuthType Basic
+AuthName "Password Required"
+AuthUserFile /www/passwords/password.file
+AuthGroupFile /www/passwords/group.file
+Require Group admins	
+	
+	
+	
+	
+Order allow,deny
+Allow from all
+
+Order	用于定义基于主机的访问功能
+
+
