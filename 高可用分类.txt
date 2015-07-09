@@ -1,0 +1,30 @@
+负载均衡 load balancing(LB)
+	硬件LB
+		F5
+		citrix(netscaler)
+		A10(AX)
+	软件LB
+		LVS
+		Nginx
+		HAproxy
+高可用	high availability(HA)
+高性能	high performance(HP)
+	高可用集群软件
+
+Messaging and Membership Layer（信息与关系层）：
+heartbeat (v1,v2,v3)，heartbeat v3 分拆  heartbeat pacemaker cluster-glue
+corosync
+cman
+keepalived
+ultramokey
+Cluster Resource Manager Layer（资源管理层，简称:CRM）：
+haresource,crm (heartbeat v1/v2)
+pacemaker (heartbeat v3/corosync)
+rgmanager (cman)
+
+常用组合：
+heartbeat v2+haresource(或crm) (说明：一般常用于CentOS 5.X)
+heartbeat v3+pacemaker (说明：一般常用于CentOS 6.X)
+corosync+pacemaker (说明：现在最常用的组合)
+cman + rgmanager (说明：红帽集群套件中的组件，还包括gfs2,clvm)
+keepalived+lvs (说明：常用于lvs的高可用)

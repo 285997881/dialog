@@ -1,0 +1,19 @@
+主机名要和uname -n 一致
+ssh互信
+ssh-keygen -t rsa  -f ~/.ssh/id_rsa -P ''
+ssh-copy-id -i .ssh/id.rsa.pub node2
+
+时间同步
+
+
+
+yum install heartbeat
+
+配置文件
+1 秘钥文件 600 authkeys
+2 heartbeat服务配置文件ha.cf
+3 资源配置文件 haresources
+
+cp /usr/share/doc/heartbeat/{authkeys,ha.cf,haresources} /etc/ha.d
+
+chmod 600 authkeys

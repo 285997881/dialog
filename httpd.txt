@@ -137,12 +137,14 @@ AuthUserFile /www/passwords/password.file
 AuthGroupFile /www/passwords/group.file
 Require Group admins	
 	
-	
-	
-	
+		
 Order allow,deny
 Allow from all
 
 Order	用于定义基于主机的访问功能
 
+alias	别名
+
+
+虚拟主机
 

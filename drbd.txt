@@ -1,0 +1,148 @@
+DRBD的全称为：Distributed ReplicatedBlock Device(DRBD)分布式块设备复制,DRBD是由内核模块和相关脚本而构成，用以构建高可用性的集群。
+
+类似于一个网络RAID-1功能
+
+安装前新建个磁盘，但不要分区，partprobe(partx)就好
+
+http://drbd.linbit.com/
+http://oss.linbit.com/drbd/
+
+drbd-8.4.4
+http://oss.linbit.com/drbd/8.4/drbd-8.4.4.tar.gz
+
+安装所需依赖:
+yum -y install gcc kernel-devel kernel-headers flex
+drbd下载地址：http://oss.linbit.com/drbd/
+
+
+安装用户空间工具：
+
+tar xzf drbd-8.4.1.tar.gz
+cd drbd-8.4.1
+./configure --prefix=/usr/local/drbd --with-km
+make KDIR=/usr/src/kernels/2.6.18-274.18.1.el5-i686/(此处记下内核版本，看下面的是否和这个一致)
+make install
+mkdir -p /usr/local/drbd/var/run/drbd
+cp /usr/local/drbd/etc/rc.d/init.d/drbd /etc/rc.d/init.d
+chkconfig --add drbd
+chkconfig drbd on
+
+
+安装drbd模块:
+cd drbd
+make clean
+make KDIR=/usr/src/kernels/2.6.18-274.18.1.el5-i686/
+cp drbd.ko /lib/modules/`uname -r`/kernel/lib/(此处最好检查一下内核版本是否和前面的一致。第一次装，被它坑苦了)
+depmod
+
+
+cat /usr/local/drbd/etc/drbd.conf 可以看到里面定义了两类文件
+include "drbd.d/global_common.conf";    (定义全局变量)
+include "drbd.d/*.res";			(定义共享的磁盘)
+
+
+vi /usr/local/drbd/etc/drbd.d/global_common.conf
+global {
+  usage-count yes;#是否参加DRBD使用统计，默认为yes
+}
+common {
+  net {
+    protocol C;    #使用DRBD的同步协议
+  }
+}
+
+
+vi /usr/local/drbd/etc/drbd.d/r0.res
+
+resource r0 {
+  on node1 {                    	#第个主机说明以on开头，后面是主机名称
+    device    /dev/drbd1;		#DRBD设备名称
+    disk      /dev/hdb1;		#drbd0使用的磁盘分区为"sda#"
+    address   192.168.1.101:7789;	#设置DRBD监听地址与端口
+    meta-disk internal;
+  }
+  on node2 {
+    device    /dev/drbd1;
+    disk      /dev/hdb1;
+    address   192.168.1.103:7789;
+    meta-disk internal;
+  }
+}
+
+scp /usr/local/drbd/etc/drbd.d/{r0.res global_common.conf} server2:/usr/local/drbd/etc/drbd.d/
+
+
+以下操作需要在node1和node2操作
+
+modprobe drbd                                    //载入 drbd 模块
+lsmod|grep drbd    				//确认 drbd 模块是否载入
+
+dd if=/dev/zero of=/dev/hdb1 bs=1M count=100     //把一些资料塞到 hdb 內 (否则 create-md 时有可能会出现错误)  (但我加入它反而出错)
+
+drbdadm create-md r0                             //建立 drbd resource
+
+drbdadm up r0                                  //启动 resource r0
+
+查看node1和node2的状态应该类似下面的：
+cat /proc/drbd
+version: 8.4.1 (api:1/proto:86-100)
+GIT-hash: 91b4c048c1a0e06777b5f65d312b38d47abaea80 build by root@localhost.localdomain, 2012-02-12 06:05:36
+ m:res  cs         ro                   ds                         p  mounted  fstype
+ 0:r0   Connected  Secondary/Secondary  Inconsistent/Inconsistent  C
+
+
+表明现在已经启动服务，但还没有设置同步（即需要设置Primary Node）
+
+设置Primary Node
+以下操作仅在node1执行。设置node1为primary node:
+
+drbdadm primary --force r0
+查看node1的状态：
+cat /proc/drbd
+
+创建DRBD文件系统
+以下操作仅在node1执行。
+上面已经完成了/dev/drbd1的初始化，现在来把/dev/drbd1格式化成ext3格式的文件系统。
+
+mkfs.ext3 /dev/drbd1
+
+然后将/dev/drbd1挂载到之前创建的/db目录。
+mount /dev/drbd1 /db
+
+现在你只要把数据写入/db目录，drbd即会立刻把数据同步到备机192.168.1.103的/dev/hdb1分区上。
+
+
+drbd同步测试
+当在备机node2启动drbd时，它是无法挂载/dev/hdb1分区的，我们可以尝试写些数据到node1的目录/db上，然后停止node2的drbd。
+drbdadm down r0
+之后就可以把node2的/dev/hdb1挂载到目录/db
+mount -t ext3 /dev/hdb1 /db
+我们就可以查看node2的/db目录是否有node1的数据。
+
+
+手动切换主备机
+我们可以把node1改变为备机，而node2改变为主机。
+在node1上操作：
+umount /dev/drbd1
+drbdadm secondary r0
+在node2上操作：
+drbdadm primary r0
+此时应该已经切换成功。
+
+
+
+启用和禁用资源
+手动启用资源
+drbdadm up <resource>
+手动禁用资源
+drbdadm down <resource>
+注释：resource：为资源名称；当然也可以使用all表示[停用|启用]所有资源
+
+7.6、升级和降级资源
+升级资源
+drbdadm primary <resource>
+降级资源
+drbdadm secondary <resource>
+注释：在单主模式下的DRBD，两个节点同时处于连接状态，任何一个节点都可以在特定的时间内变成主；但两个节点中只能一为主，如果已经有一个主，需先降级才可能升级；在双主模式下没有这个限制
+
+service drbd status

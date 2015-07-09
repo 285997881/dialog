@@ -5,7 +5,26 @@ http://memcached.org/
 http://memcached.org/files/memcached-1.4.24.tar.gz
 
 
-libevent
+
+Memcached是一款开源、高性能、分布式内存对象缓存系统，可应用各种需要缓存的场景，其主要目的是通过降低对Database的访问来加速web应用程序。它是一个基于内存的“键值对”存储，用于存储数据库调用、API调用或页面引用结果的直接数据，如字符串、对象等。
+
+Memcached是以LiveJournal旗下Danga Interactive 公司的Brad Fitzpatric 为首开发的一款软件。现在已成为mixi、hatena、Facebook、Vox、LiveJournal等众多服务中提高Web应用扩展性的重要因素。
+
+许多Web应用都将数据保存到RDBMS(关系型数据库管理系统)中，应用服务器从中读取数据并在浏览器中显示。 但随着数据量的增大、访问的集中，就会出现RDBMS的负担加重、数据库响应恶化、 网站显示延迟等重大影响。
+
+这时就该memcached大显身手了。memcached是高性能的分布式内存缓存服务器。 一般的使用目的是，通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web应用的速度、 提高可扩展性。
+
+
+memcached需要libevent库
+yum install libevent libeventdevel
+
+安装memcached
+tar xf memcached-*.tar.gz
+cd memcached-*
+./configure && make && make install
+
+
+
 
 memcached
 	-l	监听的IP地址
@@ -16,6 +35,10 @@ memcached
 	-c	支持的最大并发数，默认为1204
 	
 
+	
+	
+	
+	
 #!/bin/bash
 #
 # Init file for memcached

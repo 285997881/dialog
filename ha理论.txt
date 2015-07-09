@@ -1,0 +1,26 @@
+active/passive
+primary/standby
+
+failover(¹ÊÕÏ×ªÒÆ)
+failback
+
+
+messaging layer
+	heartbeat(v1,v2,v3)
+	corosync
+	cman
+	keepalived
+	ultramokey
+cluster resource manager(crm)
+	pacemaker(heartbeat,corosync)
+	rgmanager(cman)
+resource agent(ra)
+
+
+
+ra classes
+LSB	linux standard base(start|stop|restart|status)
+OCF	open cluster framework
+
+RHCS(cluster suite)
+

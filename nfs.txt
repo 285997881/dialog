@@ -1,0 +1,57 @@
+NFS
+
+RPC(remote procedure call 远程过程调用)
+
+需要两个工具，系统默认安装的
+nfs-utils
+rpcbind(portmap)
+
+NFS守护进程
+	nfsd
+	mountd
+	rpcbind
+
+NFS的配置文件
+
+/etc/exports	nfs的主要配置文件
+/usr/sbin/exportfs	nfs的管理命令
+/usr/sbin/showmount	客户端的查看命令
+/var/lib/nfs/etab	记录nfs分享的目录的完整权限设定值
+/var/lib/nfs/xtab	记录登陆过的客户端信息
+
+vim /etc/exports
+
+输出目录 客户端1选项(访问权限,用户映射,其他)
+/home/david 192.168.1.0/24(rw)
+
+nfs的启动和停止
+启动
+/etc/init.d/rpcbind start
+/etc/init.d/nfs start
+
+停止
+/etc/init.d/nfs stop
+/etc/init.d/rpcbind stop
+
+showmount 
+	  -e   默认查看自己的nfs共享
+	  -e IP 查看指定电脑的nfs共享
+ 	  -a	显示与客户端连接上的目录信息
+
+
+挂载nfs
+mount NFS服务器IP:共享目录 本地挂载点目录
+
+开机自动挂载
+server:/remote/export /local/directory nfs   options  0 0
+
+相关命令
+exportfs
+	修改配置文件/etc/exports后，使之生效
+	-a  全部挂载nfs共享
+	-r  重新读取配置文件内容
+	-u  拆卸共享(-ua拆卸所有共享)
+	
+nfsstat   查看nfs运行状态
+
+rpcinfo   查看rpcbind运行情况

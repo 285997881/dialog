@@ -14,4 +14,79 @@ MYSQL结构
 	InnoDB
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+my.cnf 从 /usr/share/mysql/my-*.cnf复制为/etc/my.cnf
+
+\c	clear
+\h	help
+\q	exit|quit
+\s	status
+\T	tee
+\t	notee
+\u db	use database		切换数据库
+\. fn	source filename		读取并执行给定的sql命令
+
+default-character-set=     字符集
+
+mysql
+mysqladmin
+	mysqladmin -u root -p password "new password"
+
+mysqldump
+	mysqldump -u root -p database >backup.sql
+
+show databases;
+show tables from dbname;
+show [full] columns from tablename
+show index from tablename
+
+触发器
+create trigger name before|after insert|update|delete on tablename for each row code
+drop trigger [databasename.]triggername
+
+mysqladmin 能完成的工作
+	创建，删除database
+	修改用户密码
+		mysqladmin -u root -h localhost password **
+	重新加载名为mysql的权限数据库
+	刷新数据库数据和日志文件(清除各种缓存区或临时缓冲区)
+	查看mysql服务器的工作状态和变量设置情况
+	列出和保存mysql进程
+	测试与mysql服务器的连接是否成功
+	关闭mysql服务器
+
+
+/etc/init.d/mysqld start
+port:3306
+
+
+mysqldump 
+	mysqldump [options] dbname [tables] > backup.sql
+	mysqldump [options] --alldatabasess
+
+恢复数据库
+	mysql -u root -p datanasename < backup.sql
+	mysql -u root -p < backup.sql (恢复多个数据库)
+
+镜像机制
+
+grant replicetion slave on *.* to replicuser@slavehostname identified by '***'
+	
 

@@ -1,0 +1,3 @@
+var OX_b1292b96 = '';
+OX_b1292b96 += "<"+"a href=\'//gg3.51cto.com/www/delivery/ck.php?oaparams=2__bannerid=1090__zoneid=460__cb=cfcb89dae2__oadest=http%3A%2F%2Fedu.51cto.com%2Factivity%2Flists%2Fid-15.html\' target=\'_blank\'><"+"font color=\'red\' style=\"text-decoration:underline\">51CTO学院2周年庆，分享故事赢大礼包<"+"/font><"+"/a><"+"div id=\'beacon_cfcb89dae2\' style=\'position: absolute; left: 0px; top: 0px; visibility: hidden;\'><"+"img src=\'//gg.51cto.com/www/delivery/lg.php?bannerid=1090&amp;campaignid=269&amp;zoneid=460&amp;loc=1&amp;referer=http%3A%2F%2Ffreeloda.blog.51cto.com%2F2033581%2F1274533&amp;cb=cfcb89dae2\' width=\'0\' height=\'0\' alt=\'\' style=\'width: 0px; height: 0px;\' /><"+"/div>\n";
+document.write(OX_b1292b96);

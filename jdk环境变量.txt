@@ -1,0 +1,33 @@
+jdk环境变量
+
+windows
+
+我的电脑-->属性-->高级-->环境变量
+
+JAVA_HOME
+指明JDK安装路径
+
+CLASSPATH= .;%JAVA_HOME%/lib/dt.jar;%JAVA_HOME%/lib/tools.jar
+
+CLASSPATH为java加载类(class or lib)路径，只有类在classpath中，java命令才能识别
+Path  %JAVA_HOME%/bin;%JAVA_HOME%/jre/bin; 
+
+键入cmd，运行“java -version”、“java”、“javac”三个命令，看输出
+
+
+
+linux
+
+下载jdk.**.bin
+执行安装 ./jdk.**.bin
+
+环境变量到/etc/profile中添加如下内容
+
+JAVA_HOME=/usr/share/jdk1.5.0_05(jdk安装位置)
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+PATH=$JAVA_HOME/bin:$PATH
+
+export JAVA_HOME CLASSPATH PATH
+
+
+重新登录，通过java –version查看JDK是否安装成功。
