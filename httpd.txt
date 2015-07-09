@@ -145,6 +145,76 @@ Order	用于定义基于主机的访问功能
 
 alias	别名
 
+虚拟主机和中心主机不能同时使用
+需先注释中心主机的DocumentRoot
 
 虚拟主机
+<VirtualHost>
+ServerName
+ServerAlias
+DocumentRoot /www/html
+Alias
+ErrorLog
+CustomLog
 
+<Directory "">
+	Options
+	AllowOverride
+</Directory>
+<Location /bin>#定义文件夹的访问控制
+	SetHandler server-status
+	order Deny,aAllow
+	Deny from 
+</Location>
+</VirtualHost>
+
+
+
+基于ip的虚拟主机
+<VirtualHost 127.0.0.1:80>
+	ServerName a.com
+	DocumentRoot "/www/a.com"
+</VirtualHost>
+<VirtualHost 127.0.0.2:80>
+	ServerName b.com
+	DocumentRoot "/www/b.com"
+</VirtualHost>
+
+基于port的虚拟主机
+Listen 8011
+<VirtualHost 127.0.0.1:8011>
+	ServerName c.com
+	DocumentRoot "/www/c.com"
+</VirtualHost>
+
+基于name的虚拟主机
+c/windows/system32/drivers/etc/hosts
+NameVritualHost 127.0.0.1:80
+<VirtualHost 127.0.0.1:80>
+	ServerName a.com
+	DocumentRoot "/www/a.com"
+	<Directory "www/a.com">
+		Options None
+		AllowOverride None
+		Order allow deny
+		allow all
+	</Directory>
+</VirtualHost>
+
+默认的虚拟主机
+<VirtualHost _default_:8011|*>
+	ServerName c.com
+	DocumentRoot "/www/c.com"
+</VirtualHost>
+
+
+openssl
+
+yum install mod_ssl
+/etc/httpd/conf.d/ssl.conf
+
+cd /etc/pki/CA
+(umask 077 openssl genrsa -out private/cakey.pem 2048)
+
+
+MVC Model-View-Controller 模型（Model）、视图（View）和控制器（Controller）
