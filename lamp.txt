@@ -33,6 +33,7 @@ http://cn2.php.net/get/php-5.6.10.tar.bz2/from/this/mirror
 
 mysql 
 https://www.mysql.com/
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz
 http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-5.6.25-1.el6.x86_64.rpm-bundle.tar
 
 
@@ -43,13 +44,21 @@ yum grouplist
 
 httpd
 
+准备工作
+yum install gcc gcc-c++ zlib-devel openssl-devel
 安装次序 
-apr--apr-util--httpd 
+apr -- apr-util -- pcre -- httpd 
 
 apr (apache portable runtime)	https://apr.apache.org/
 apr-util
 http://mirrors.cnnic.cn/apache//apr/apr-1.5.2.tar.gz
 http://mirrors.cnnic.cn/apache//apr/apr-util-1.5.4.tar.gz
+
+pcre
+http://www.pcre.org/
+http://sourceforge.net/projects/pcre/files/pcre2/10.20/pcre2-10.20.tar.bz2/download
+http://sourceforge.net/projects/pcre/files/pcre/8.37/pcre-8.37.tar.bz2/download
+
 
 tar xvf apr-1.5.2.tar.gz
 cd apr-1.5.2
@@ -62,8 +71,78 @@ cd apr-util-1.5.4
 make && make install
 
 
+tar xvf pcre-8.37.tar.bz2
+cd pcre-8.37
+./configure --prefix=/usr/local/pcre
+make && make install
 
---enable-so
---enable-ssl
---enable-proxy-fcgi
---enable-rewrite
+tar xvf httpd-2.4.12.tar.bz2
+cd httpd-2.4.12
+./configure 
+--prefix=/usr/local/apache 
+--sysconfdir=/etc/httpd  
+--with-apr=/usr/local/apr 
+--with-apr-util=/usr/local/apr-util  
+--with-pcre=/usr/local/pcre 
+--enable-so 
+--enable-ssl  
+--enable-proxy-fcgi  
+--enable-rewrite  
+--enable-cgi
+--enable-cgid
+--enable-modules=most
+--enable-mode-shared=most
+--enable-mpms-shared=all  
+--with-mpm=event|worker|prefork  
+--enable-deflate(压缩功能)
+
+./configure --prefix=/usr/local/apache --sysconfdir=/etc/httpd --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --with-pcre=/usr/local/pcre --enable-so --enable-ssl --enable-proxy-fcgi --enable-rewrite --enable-mpms-shared=all --with-mpm=prefork --enable-deflate --enable-cgi --enable-cgid --enable-modules=most --enable-mode-shared=most
+
+./configure 
+--prefix=/usr/local/apache2
+--sysconfdir=/etc/httpd 
+--with-z=/usr/local/zlib/ 
+--with-apr=/usr/local/apr
+--with-apr-util=/usr/local/apr-util 
+--with-pcre=/usr/local/pcre
+--with-included-apr 
+--enable-so 
+--enable-deflate=shared 
+--enable-expires=shared
+--enable-rewrite=shared 
+--enable-static-support 
+--with-mpm=prefork
+
+
+make && make install
+
+
+mysql
+
+安装cmake
+http://www.cmake.org/
+http://www.cmake.org/files/v3.3/cmake-3.3.0-rc3.tar.gz
+tar zxvf cmake-2.8.4.tar.gz  
+cd cmake-2.8.4  
+./configure  
+make  
+make install  
+
+安装ncurses
+http://www.gnu.org/software/ncurses/
+http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.9.tar.gz
+tar zxvf ncurses-5.8.tar.gz  
+cd ncurses-5.8  
+./configure  
+make  
+make install 
+
+
+groupadd -r -g 306 mysql
+useradd -g 306 -r -u 306 mysql 
+
+
+
+
+my.cnf
+/etc/my.cnf -- /etc/mysql/my.cnf -- $BASEDIR/my.cnf -- $DATADIR.my.cnf -- ~/.my.cnf (以最后为准)
