@@ -146,3 +146,8 @@ useradd -g 306 -r -u 306 mysql
 
 my.cnf
 /etc/my.cnf -- /etc/mysql/my.cnf -- $BASEDIR/my.cnf -- $DATADIR.my.cnf -- ~/.my.cnf (以最后为准)
+
+
+
+
+http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.bz2
