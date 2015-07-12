@@ -137,17 +137,60 @@ cd ncurses-5.8
 make  
 make install 
 
+mysql
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz
 
-groupadd -r -g 306 mysql
-useradd -g 306 -r -u 306 mysql 
+安装MySQL 5.6.16登录出错：段错误(Segmentation fault)解决办法
+编辑文件cmd-line-utils/libedit/terminal.c
+找到代码段类似char buf[TC_BUFSIZE];的，将其注释，并找到下面的变量 area = buf; 将其更改为area = NULL;
 
 
+groupadd  mysql
+useradd -g mysql mysql 
+
+mkdir -p /opt/mysql   #MySQL安装目录  
+chown -R mysql:mysql /opt/mysql  
+mkdir -p /data/mysql  #MySQL数据存放目录  
+mkdir -p /data/mysql/data #存放数据  
+mkdir -p /data/mysql/log  #存放日志  
+mkdir -p /data/mysql/tmp  #存放临时文件  
+chown -R mysql:mysql /data/mysql 
+
+tar zxvf mysql-5.6.25.tar.gz  
+cd mysql-5.6.25
+
+cmake . -DCMAKE_INSTALL_PREFIX=/opt/mysql -DMYSQL_DATADIR=/data/mysql -DSYSCONFDIR=/opt/mysql -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci  -DEXTRA_CHARSETS=all -DENABLED_LOCAL_INFILE=1  
+make  
+make install  
+
+参数说明：
+-DCMAKE_INSTALL_PREFIX=/opt/mysql        //指定安装目录
+-DINSTALL_DATADIR=/data/mysql            //指定数据存放目录
+-DSYSCONFDIR=/opt/mysql                  //指定配置文件目录（本例的配置文件为/opt/mysql/my.cnf）
+-DDEFAULT_CHARSET=utf8                   //指定字符集
+-DDEFAULT_COLLATION=utf8_general_ci      //指定校验字符
+-DEXTRA_CHARSETS=all                     //安装所有扩展字符集
+-DENABLED_LOCAL_INFILE=1                 //允许从本地导入数据
+
+
+创建数据库
+./scripts/mysql_install_db   --user=mysql --basedir=/opt/mysql  
+
+vim /etc/my.cnf
+[client]  
+socket = /opt/mysql/run/mysql.sock  
 
 
 my.cnf
 /etc/my.cnf -- /etc/mysql/my.cnf -- $BASEDIR/my.cnf -- $DATADIR.my.cnf -- ~/.my.cnf (以最后为准)
 
 
-Segmentation fault
+启动MySQL
+./support-files/mysql.server start  
+
+把MySQL加入系统启动项和开机启动
+cp ./support-files/mysql.server /etc/rc.d/init.d/mysqld #把Mysql加入系统启动
+
+chmod 755 /etc/init.d/mysqld #增加执行权限
 
 http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.bz2
