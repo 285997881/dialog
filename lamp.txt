@@ -193,4 +193,32 @@ cp ./support-files/mysql.server /etc/rc.d/init.d/mysqld #把Mysql加入系统启
 
 chmod 755 /etc/init.d/mysqld #增加执行权限
 
+
+
+shell> groupadd mysql
+shell> useradd -r -g mysql mysql
+# Beginning of source-build specific instructions
+shell> tar zxvf mysql-VERSION.tar.gz
+shell> cd mysql-VERSION
+shell> cmake .
+shell> make
+shell> make install
+# End of source-build specific instructions
+# Postinstallation setup
+shell> cd /usr/local/mysql
+shell> chown -R mysql .
+shell> chgrp -R mysql .
+shell> scripts/mysql_install_db --user=mysql
+shell> chown -R root .
+shell> chown -R mysql data
+shell> bin/mysqld_safe --user=mysql &
+# Next command is optional
+shell> cp support-files/mysql.server /etc/init.d/mysql.server
+
+
+
+
+
+
+
 http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.bz2
