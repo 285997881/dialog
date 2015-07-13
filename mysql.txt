@@ -15,12 +15,17 @@ MYSQL结构
 	
 	
 	
+mysql.sock文件作用	
 	
+Mysql有两种连接方式： 
+（1）TCP/IP 
+（2）socket 	
 	
-	
-	
-	
-	
+mysql.sock不在/tmp/下就在/var/lib/mysql下
+可以用ip方法连接mysql
+mysql -h127.0.0.1 -uuser -p
+或给mysql.sock创建个链接
+ln -s /tmp/mysql.sock /var/lib/mysql/mysql.sock	
 	
 	
 	
