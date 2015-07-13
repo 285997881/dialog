@@ -1,3 +1,6 @@
+http://dev.mysql.com/doc/refman/5.6/en/linux-installation-rpm.html
+
+
 MYSQL
 
 DDL
@@ -14,8 +17,13 @@ MYSQL结构
 	InnoDB
 	
 	
-	
-	
+添加mysql yum源
+http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
+yum localinstall mysql-community-release-el6-5.noarch.rpm
+
+安装mysql
+yum install mysql-community-server
+	包括mysql-community-server  mysql-community-client  mysql-community-common  mysql-community-libs
 	
 	
 	
@@ -52,10 +60,42 @@ mysqladmin
 mysqldump
 	mysqldump -u root -p database >backup.sql
 
-show databases;
-show tables from dbname;
+show {databases|schemas} {like 'pattern'|where expr};
+show [full] tables [from|in dbname];
 show [full] columns from tablename
 show index from tablename
+
+其他show
+show engines;  #查看先有的存储引擎
+show privileges; #查询命令的功能(特权)
+show table status [from|in db_name] [like 'pattern'|where expr]
+show [global|session] status #查询服务器的状态信息
+show character set [like 'utf8'];
+show [full] columns from database;
+show create{database|schema|table|procedure|function|trigger|view|events} db_name;
+
+show engine engine_name {status|mutex}
+	show engine innodb status;
+	SHOW ENGINE PERFORMANCE_SCHEMA STATUS\G
+	
+show grants [for user]
+	show grants for current_user
+	show grants for current_user()
+	
+show {index|indexes|keys|triggers} {from|in} tbl_name|db_name
+show [gloabl|session] variables [like 'pattern'|where expr]
+show warnings
+show master status #provides status information about the binary log files of the master
+
+show open tables [{from|in} db_name] [like 'pattern'|where expr] @当前在缓存中打开的非临时表
+show plugins @查询插件信息
+show procedure code proc_name #查询过程的详细信息
+show procedure status [like 'pattern'|where expr]
+show [full] processlist #查询当前用户所允许的线程(threads)
+show slave hosts
+show slave status;
+
+
 
 触发器
 create trigger name before|after insert|update|delete on tablename for each row code
