@@ -1,5 +1,4 @@
-http://dev.mysql.com/doc/refman/5.6/en/linux-installation-rpm.html
-
+http://dev.mysql.com/doc/refman/5.6/en/copying-databases.html
 
 MYSQL
 
@@ -17,7 +16,9 @@ MYSQL结构
 	InnoDB
 	
 	
-<<<<<<< HEAD
+ General Availablility (GA) release
+	
+	
 添加mysql yum源
 http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
 yum localinstall mysql-community-release-el6-5.noarch.rpm
@@ -25,7 +26,40 @@ yum localinstall mysql-community-release-el6-5.noarch.rpm
 安装mysql
 yum install mysql-community-server
 	包括mysql-community-server  mysql-community-client  mysql-community-common  mysql-community-libs
-=======
+
+/usr/bin/mysql_install_db --user=mysql
+	--basedir=/dir
+	--datadir=/dir
+	
+安装后的文件
+/usr/bin			client programs and scripts
+/usr/sbin			the mysqld server 
+/var/lib/mysql 		log files,databases 
+
+	
+cmake 选项
+		-cmake install prefix  安装路径
+		-compilation comment Comment about compilation environment
+	
+mysql配置文件my.cnf
+
+位置				作用
+/etc/my.cnf			global options
+/etc/mysql/my.cnf	global options(as of mysql 5.1.15)
+sysconfdir/my.cnf	global options
+$mysql_home/my.cnf	server-specific options
+default-sxtra-file	the file specified with --difaults-extra-file=path
+~/my.cnf 			user-specifix options
+默认的依次从上到下检查配置文件是否存在，使用第一个发现的文件作为启动文件。
+
+查看mysql服务加载的文件
+ps ax| grep '[m]ysqld'
+
+cat /proc/$(pidof mysqld)/cmdline |tr '\0' '\n'
+
+查看my.cnf的使用顺序
+/usr/sbin/mysqld --help --verbose --skip-networking --pid-file=$(tempfile) 2> /dev/null | grep -A1 'Default options are read'
+	
 	
 mysql.sock文件作用	
 	
@@ -66,9 +100,27 @@ default-character-set=     字符集
 mysql
 mysqladmin
 	mysqladmin -u root -p password "new password"
+	SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpwd');
+	UPDATE mysql.user SET Password = PASSWORD('newpwd')
+
 
 mysqldump
 	mysqldump -u root -p database >backup.sql
+	
+	
+还原数据库	
+cat backup.sql | mysql db_name
+	
+create database db_name;
+use db_name
+source /dir/backup.sql	
+
+mysqlshow dataase
+	
+	
+http://dev.mysql.com/doc/refman/5.6/en/tutorial.html	
+	
+	
 
 show {databases|schemas} {like 'pattern'|where expr};
 show [full] tables [from|in dbname];
@@ -134,6 +186,12 @@ mysqldump
 恢复数据库
 	mysql -u root -p datanasename < backup.sql
 	mysql -u root -p < backup.sql (恢复多个数据库)
+	
+cat backup.sql | mysql db_name
+	
+create database db_name;
+use db_name
+source /dir/backup.sql	
 
 镜像机制
 
