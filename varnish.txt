@@ -1,0 +1,148 @@
+varnish
+
+Varnish 是一款高性能且开源的反向代理服务器和 HTTP 加速器，其采用全新的软件体系机构，和现在的硬件体系紧密配合，与传统的 squid 相比，varnish 具有性能更高、速度更快、管理更加方便等诸多优点
+
+https://www.varnish-cache.org/
+git clone git://git.varnish-cache.org/varnish-cache
+
+yum安装varnish
+
+Varnish 4.0:
+rpm --nosignature -i https://repo.varnish-cache.org/redhat/varnish-4.0.el6.rpm
+yum install varnish
+
+Varnish 3.0:
+If you are on RHEL 5 or a compatible distribution, use:
+rpm --nosignature -i https://repo.varnish-cache.org/redhat/varnish-3.0.el5.rpm
+yum install varnish
+
+For RHEL 6 and compatible distributions, use:
+rpm --nosignature -i https://repo.varnish-cache.org/redhat/varnish-3.0.el6.rpm
+yum install varnish
+
+varnish源码包
+https://repo.varnish-cache.org/source/varnish-4.0.3.tar.gz
+https://repo.varnish-cache.org/source/varnish-4.0.2.tar.gz
+https://repo.varnish-cache.org/source/varnish-4.0.1.tar.gz
+https://repo.varnish-cache.org/source/varnish-4.0.0.tar.gz
+
+varnish依赖的软件包
+debian/ubuntu
+automake  autotools-dev libedit-dev libjemalloc-dev libncurses-dev libpcre3-dev libtool pkg-config python-docutils python-sphinx
+
+redhat/centos
+autoconf automake jemalloc-devel libedit-devel libtool ncurses-devel pcre-devel pkgconfig python-docutils python-sphinx
+
+tar xvf varnish-4.0.3.tar.gz
+cd varnish-4.0.3
+sh autogen.sh	验证依赖关系是否通过
+sh configure
+make
+make install
+
+varnish会安装在/usr/local
+varnish binary在/usr/local/sbin/varnishd
+配置文件在/usr/local/etc/varnish/default.vcl
+
+
+VCL(varnish configuration language)
+是varnish配置语言，其用来定义varnish的存取策略。VCL语法比较简单，跟 C 和 Perl 比较相似。主要有以下几点：
+块是由花括号分隔，语句以分号结束，使用‘ # ’符号可以添加注释。
+VCL 使用指定运算符“=”、比较运算符“==”、逻辑运算符“!,&&,!!”等形式，还支持正则表达式和用“~”进行 ACL 匹配运算。
+VCL 没有用户自己定义的变量，你可以在 backend、request 或 object 上设置变量值，采用 set 关键字进行设置。例如 set req.backend = director_employeeui;
+两个字符串的连接，他们之间没有任何运算符。
+
+Access control lists (ACLs)
+acl local {
+  "localhost";         // myself
+  "192.0.2.0"/24;      // and everyone on the local network
+  ! "192.0.2.23";      // except for the dialin router
+}
+
+
+VCL内置函数
+vcl_recv
+用于接收和处理请求。当请求到达并成功接收后被调用，通过判断请求的数据来决定如何处理请求。例如如何响应、怎么响应、使用哪个后端服务器等。
+此函数一般以如下几个关键字结束。
+pass：表示进入 pass 模式，把请求控制权交给 vcl_pass 函数。
+pipe：表示进入 pipe 模式，把请求控制权交给 vcl_pipe 函数。
+lookup：表示进入 lookup 模式，把请求控制权交给 lookup 指令处理，在缓存中查找被请求的对象，并且根据查找的结果把控制权交给函数 vcl_hit 或函数 vcl_miss。
+error code [reason]：表示返回“code”给客户端，并放弃处理该请求。“code”是错误标识，例如 200 和 405 等。“reason”是错误提示信息。
+
+vcl_pipe 
+此函数在进入 pipe 模式时被调用，用于将请求直接传递至后端主机，在请求和返回的内容没有改变的情况下，将不变的内容返回给客户端，直到这个连接被关闭。
+此函数一般以如下几个关键字结束。
+error code [reason]。
+pipe	Proceed with pipe mode
+
+
+vcl_pass 
+此函数在进入 pass 模式时被调用，用于将请求直接传递至后端主机。后端主机在应答数据后将应答数据发送给客户端，但不进行任何缓存，在当前连接下每次都返回最新的内容。
+此函数一般以如下几个关键字结束。
+error code [reason]。
+pass	Proceed with pass mode
+restart 重新启动流程，增加启动次数，如果重新启动次数高于 max_restarts 发出一个错误警告
+
+
+vcl_hash
+当您想把一个数据添加到 hash 上时，调用此函数。
+此函数一般以如下几个关键字结束。
+Hash。
+
+
+vcl_hit 
+在执行 lookup 指令后，在缓存中找到请求的内容后将自动调用该函数。
+此函数一般以如下几个关键字结束。
+deliver：表示将找到的内容发送给客户端，并把控制权交给函数 vcl_deliver。
+error code [reason] 。
+pass。
+restart 重新启动流程，增加启动次数，如果重新启动次数高于 max_restarts 发出一个错误警告
+
+
+vcl_miss 
+在执行 lookup 指令后，在缓存中没有找到请求的内容时自动调用该方法。此函数可用于判断是否需要从后端服务器获取内容。
+此函数一般以如下几个关键字结束。
+fetch：表示从后端获取请求的内容，并把控制权交给 vcl_fetch 函数。
+error code [reason] 。
+pass。
+
+
+vcl_fetch 
+在后端主机更新缓存并且获取内容后调用该方法，接着，通过判断获取的内容来决定是将内容放入缓存，还是直接返回给客户端。
+此函数一般以如下几个关键字结束。
+error code [reason]。
+pass。
+deliver。
+esi。
+restart 重新启动流程，增加启动次数，如果重新启动次数高于 max_restarts 发出一个错误警告
+
+
+vcl_deliver 
+将在缓存中找到请求的内容发送给客户端前调用此方法。
+此函数一般以如下几个关键字结束。
+error code [reason]。
+deliver。
+restart 重新启动流程，增加启动次数，如果重新启动次数高于 max_restarts 发出一个错误警告
+
+
+
+vcl_error
+出现错误时调用此函数。
+此函数一般以如下几个关键字结束。
+deliver。
+restart。
+
+
+
+Varnish处理HTTP请求的过程
+Receive 状态（vcl_recv）。也就是请求处理的入口状态，根据 VCL 规则判断该请求应该 pass（vcl_pass）或是 pipe（vcl_pipe），还是进入 lookup（本地查询）。
+Lookup 状态。进入该状态后，会在 hash 表中查找数据，若找到，则进入 hit（vcl_hit）状态，否则进入 miss（vcl_miss）状态。
+Pass（vcl_pass）状态。在此状态下，会直接进入后端请求，即进入 fetch（vcl_fetch）状态
+Fetch（vcl_fetch）状态。在 fetch 状态下，对请求进行后端获取，发送请求，获得数据，并根据设置进行本地存储。
+Deliver（vcl_deliver）状态。将获取到的数据发给客户端，然后完成本次请求。
+
+
+Varnish的Storage方式
+    1)malloc 通过malloc获取内存。
+    2) Mmap file 创建大文件，通过二分法分段映射成1G以内的大块。
+
