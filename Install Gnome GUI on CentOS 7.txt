@@ -1,0 +1,12 @@
+Install Gnome GUI on CentOS 7/RHEL 7
+
+CentOS 7
+yum groupinstall "GNOME Desktop" "Graphical Administration Tools"
+
+RHEL 7
+yum groupinstall "Server with GUI"
+
+
+Enable GUI on system start up. In CentOS 7,  systemd uses ‘targets’ instead of runlevels; /etc/inittab file is no more used to change run levels. Issue the following command to enable the GUI on system start.
+
+# ln -sf /lib/systemd/system/runlevel5.target /etc/systemd/system/default.target
