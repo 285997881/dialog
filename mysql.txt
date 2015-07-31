@@ -155,6 +155,15 @@ source /dir/backup.sql
 
 mysqldump -uroot --password=xx dbname | mysql -uroot --password=xxx -h hostname dbname 
 
+mysqldump ---user admin --password=password mydatabase |  gzip > /usr/local/mydatabase.gz
+
+mysqldump --no-data --databases mydatabase1 mydatabase2 mydatabase3  > sql.dump
+
+mysqldump --host=host1 --opt mydatabase | mysql --host=host2 -C newdatabase
+
+mysqldump --opt mydatabase > sql.dump
+
+
 
 mysqlshow database
 	
@@ -183,6 +192,7 @@ general query log(常规查询日志)
 general_log[={0|1}] 0为off
 general_log_file=/var/lib/mysql/generallog.log
 set global general_log=1
+
 
 二进制日志(binary log)
 log-bin=/var/log/mysql/binnane
