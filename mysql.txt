@@ -1,6 +1,11 @@
 http://dev.mysql.com/doc/refman/5.6/en/copying-databases.html
 
-MYSQL
+mysql 
+https://www.mysql.com/
+http://cdn.mysql.com/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz
+http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-5.6.25-1.el6.x86_64.rpm-bundle.tar
+
+
 
 DDL
 DML
@@ -74,13 +79,27 @@ mysql -h127.0.0.1 -uuser -p
 或给mysql.sock创建个链接
 ln -s /tmp/mysql.sock /var/lib/mysql/mysql.sock	
 	
+sql模式(sql_mode)
+常用模式
+ansi
+strict_trans_tables
+traditional
+
+selece @@sql_mode 
+
+set [session|global]sql_mode='mode'	
 	
 	
+配置选项	
 	
-	
-	
-	
-	
+存储引擎	
+default_storage_engine=	
+字符集
+character_set_server= 	
+character_set_database= 	
+character_set_system= 
+时区
+system_time_zone	
 	
 	
 	
@@ -105,8 +124,26 @@ mysqladmin
 
 
 mysqldump
-	mysqldump -u root -p database >backup.sql
+	mysqldump -u root -p dbname1 dbname2 >backup.sql
+	mysqldump -u root -p --all-databases > back.sql
 	
+	
+Delimited-Text Format Backup	
+mysqldump --tab=/tmp dbname 备份数据库，将表格式备份成.sql文件，表内容备份为.txt文件	
+还原方法
+mysql dbname < table.sql 
+myslqimport dbname table.txt 
+或者
+mysql>load data infile 'table.txt' into table tname;
+
+备份方法
+mysqldump
+复制整个数据库目录(mysqlhotcopy,只适用于myisam)
+日志文件与增量备份结合
+利用镜像
+	
+如要热备份，为保证数据的完整性，需给备份加一个读操作锁(read lock)
+mysqldump -uroot -p --lock-all-tables dbname > backup.sql	
 	
 还原数据库	
 cat backup.sql | mysql db_name
@@ -114,13 +151,66 @@ cat backup.sql | mysql db_name
 create database db_name;
 use db_name
 source /dir/backup.sql	
+\. /dir/backup.sql
 
-mysqlshow dataase
+mysqldump -uroot --password=xx dbname | mysql -uroot --password=xxx -h hostname dbname 
+
+
+mysqlshow database
+	
+	
+	
+导出导入文本文件
+load data infile
+mysqlimport
+select ... into file 
+
+load data infile 'file1'
+ into table tname
+ [fields|columns] 
+	terminated by ''
+	enclosed by ''
+	escaped by ''
+	
+
+
+日志
+show variables like '%log%'
+
+错误日志	log-error=/var/log/mysqld.log
+
+general query log(常规查询日志)
+general_log[={0|1}] 0为off
+general_log_file=/var/lib/mysql/generallog.log
+set global general_log=1
+
+二进制日志(binary log)
+log-bin=/var/log/mysql/binnane
+[mysqladmin] flush logs 刷新日志
+
+使用二进制日志恢复数据库
+mysqlbinlog binarylig.000001|mysql -uroot -p
+
+show binary logs
+show master logs
+
+
+慢查询日志(slow query log)
+slow_query_log[={0|1}]
+slow_query_log_file=
+long_query_time=
+min_examined_row_limit=
+
+
+
+
+	
 	
 	
 http://dev.mysql.com/doc/refman/5.6/en/tutorial.html	
 	
-	
+
+show variables like '%%'	
 
 show {databases|schemas} {like 'pattern'|where expr};
 show [full] tables [from|in dbname];
