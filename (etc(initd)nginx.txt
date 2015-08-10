@@ -1,13 +1,4 @@
-nginx (engine x)
-
-http://nginx.org/
-http://wiki.nginx.org/
-
-http://nginx.org/download/nginx-1.9.3.tar.gz
-
-
-
-Save this file as [{{#file: nginx}} /etc/init.d/nginx]
+#Save this file as [{{#file: nginx}} /etc/init.d/nginx]
 
 #!/bin/sh
 #

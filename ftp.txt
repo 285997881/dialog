@@ -1,0 +1,51 @@
+ftp(file transfer protocol)
+
+Linux下三种常用的FTP软件比较：
+wu-ftp：比较老牌，但针对它的攻击比较多，设置比较麻烦，但功能比较强大  www.wu-ftpd.org
+proftpd：能实现wu-ftp以及server-U的所有功能。安全性也较高 www.proftpd.org
+vsftpd：比较简单易于设置的ftp软件 vsftpd.beasts.org
+
+
+FTP客户端软件
+gftp —— gftp.seul.org
+Filezilla —— filezilla.sourceforge.net
+   
+
+FTP服务的端口
+21 ：传输FTP的控制命令
+20 ：传输文件数据
+
+
+
+FTP的数据传输模式
+主动模式
+FTP客户端向服务器的FTP控制端口（21端口）发出连接请求，服务器接受连接，建立一条命令链路；当需要传输数据时，客户端在命令链路上用PORT命令告诉服务器，自己打开了某个端口，服务器从20端口向客户端的指定端口发出连接请求，建立一条数据链路来传送数据。(ftp>sendport)
+
+被动模式
+FTP客户端向服务器的FTP控制端口（21端口）发出连接请求，服务器接受连接，建立一条命令链路；当需要传输数据时，服务器在命令链路上用PASV命令告诉客户端，自己打开了某个端口，客户端向服务器的指定端口发出连接请求，建立一条数据链路来传送数据。(ftp>passive)
+
+
+
+http://www.ithov.com/linux/112797.shtml
+
+
+
+vsftpd(very secure FTP daemon)
+
+https://security.appspot.com/downloads/vsftpd-3.0.3.tar.gz
+https://security.appspot.com/vsftpd.html
+
+
+https://security.appspot.com/vsftpd.html
+
+http://www.360doc.com/content/13/1129/16/4228225_333218025.shtml
+http://blog.csdn.net/inthat/article/details/8776089
+
+
+/etc/vsftpd/vsftpd.conf
+/etc/vsftpd/ftpusers
+/etc/vsftpd/user_list
+/usr/sbin/vsftpd
+/var/ftp
+/var/ftp/pub
+/etc/pam.d/vsftpd

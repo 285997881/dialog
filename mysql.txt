@@ -41,6 +41,15 @@ yum install mysql-community-server
 /usr/sbin			the mysqld server 
 /var/lib/mysql 		log files,databases 
 
+
+
+
+源码安装mysql
+用cmake
+
+-dcmake_install_prefix=/usr/local/mysql
+-dmysql_datadir=/data
+-dsysconfidir=/etc
 	
 cmake 选项
 		-cmake install prefix  安装路径
@@ -103,6 +112,19 @@ system_time_zone
 	
 	
 	
+
+myisam，将数据存储成三个文件
+.frm	表结构文件
+.myd	数据文件(mydata)
+.myi	索引文件(myindex)
+
+innodb 
+所有的表共享一个表空间
+建议每个表独立一个表空间文件
+	.frm	表结构
+	.ibd	表空间
+	
+	
 my.cnf 从 /usr/share/mysql/my-*.cnf复制为/etc/my.cnf
 
 \c	clear
@@ -126,7 +148,33 @@ mysqladmin
 mysqldump
 	mysqldump -u root -p dbname1 dbname2 >backup.sql
 	mysqldump -u root -p --all-databases > back.sql
+
+
+
+备份
+热备份		温备份		冷备份
 	
+物理备份	逻辑备份
+
+完全备份	增量备份	差异备份
+
+mysqldump
+	dbname
+	--databases
+	--all-databases 
+	--master-data={0|1|2}	可记录备份的时间点
+	--lock-all-tables
+	--flush-logs
+	
+mysqlhotcopy
+
+ibbackup
+xtrabackup
+
+
+select * into outfile /path/file.txt from tname 
+load data infile '/path/file.txt' into tables tname
+
 	
 Delimited-Text Format Backup	
 mysqldump --tab=/tmp dbname 备份数据库，将表格式备份成.sql文件，表内容备份为.txt文件	
@@ -166,8 +214,18 @@ mysqldump --opt mydatabase > sql.dump
 
 
 mysqlshow database
+
+
+flush privileges
+refresh=flush host +flush logs 
+flush status
+flush tables
+flush threads
+flush hosts
+flush logs	
 	
 	
+mysqladm shutdown	
 	
 导出导入文本文件
 load data infile
@@ -212,6 +270,10 @@ long_query_time=
 min_examined_row_limit=
 
 
+中继日志(relay log)
+事务日志
+
+
 
 
 	
@@ -227,6 +289,7 @@ show [full] tables [from|in dbname];
 show [full] columns from tablename
 show index from tablename
 
+show processlist
 其他show
 show engines;  #查看先有的存储引擎
 show privileges; #查询命令的功能(特权)
@@ -298,3 +361,38 @@ source /dir/backup.sql
 grant replicetion slave on *.* to replicuser@slavehostname identified by '***'
 	
 
+	
+数据类型
+	数值型
+		int 
+		float
+		double
+		decimal
+		real
+	字符型
+		char
+		varchar
+		text
+		blob
+	日期
+		date
+		time
+		datetime
+		timestamp
+		year
+		
+auto_increment		
+
+
+权限
+全局权限 super
+库级别	
+表级别	delete alter trigger
+行级别	select insert update
+
+
+grant all privileges on db.* to username@'%'
+
+启动mysqld——safe时，通过更新授权表的方式直接更改其秘密，而后移除此两项重启服务器
+--skip-grant-tables
+--skip-networking

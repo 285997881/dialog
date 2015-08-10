@@ -1,0 +1,199 @@
+rsync (remote synchronize)
+
+https://rsync.samba.org/
+
+rsync+sersync
+rsync+inotify-tools
+unison+inotify
+
+
+https://download.samba.org/pub/rsync/src/rsync-3.1.1.tar.gz
+
+http://pkgs.repoforge.org/rsync/
+
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.el5.rfx.i386.rpm
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.el5.rfx.x86_64.rpm
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.el6.rfx.i686.rpm
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.el6.rfx.x86_64.rpm
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.el7.rfx.x86_64.rpm
+http://pkgs.repoforge.org/rsync/rsync-3.1.1-1.rfx.src.rpm
+
+rpm安装生成的文件
+/etc/xinetd.d/rsync 
+/usr/bin/rsync 
+/usr/share/doc/rsync-*/*
+
+
+rsync需要的配置文件，但需要自己创建
+rsyncd.conf			主配置文件
+rsyncd.secrets		登陆rsync的密码文件
+rsyncd.motd			定义rsync服务器信息，及用户登陆看到的服务器信息
+
+创建/etc/rsyncd,存放配置文件
+mkdir /etc/rsyncd
+cd /etc/rsyncd
+touch rsyncd.{conf,secrets,motd}
+
+chmod 600 rsyncd.secrets 
+
+
+
+rsyncd.conf文件内容：
+# Minimal configuration file for rsync daemon
+# See rsync(1) and rsyncd.conf(5) man pages for help
+ 
+# This line is required by the /etc/init.d/rsyncd script
+pid file = /var/run/rsyncd.pid    	#
+port = 873							#端口
+address = 192.168.1.171 			#服务器地址
+
+#使用的用户和用户组
+#uid = nobody
+#gid = nobody   
+uid = root   
+gid = root   
+ 
+use chroot = yes
+#write only 
+read only = no 		#只读模式
+ 
+ 
+#limit access to private LANs 指定访问网段
+hosts allow=192.168.1.0/255.255.255.0 10.0.1.0/255.255.255.0 
+hosts deny=*
+ 
+#最多连接数
+max connections = 5
+#指定 motd file位置
+motd file = /etc/rsyncd/rsyncd.motd
+ 
+#This will give you a separate log file
+#log file = /var/log/rsync.log
+ 
+#This will log every file transferred - up to 85,000+ per user, per sync
+#transfer logging = yes 	#是否传输文件的日志
+ 
+log format = %t %a %m %f %b
+syslog facility = local3
+timeout = 300
+
+
+#定义同步的目录 
+[linuxsirhome]   
+path = /home   
+list=yes#|no					#是否在同步目录中列出此目录
+ignore errors				#忽略i/o错误
+auth users = linuxsir		#同步认证用户
+secrets file = /etc/rsyncd/rsyncd.secrets 
+comment = linuxsir home 	#注释
+exclude =   beinan/  samba/ 排除同步的文件目录   
+
+
+密码文件：/etc/rsyncd/rsyncd.secrets的内容格式；用户名:密码
+
+linuxsir:222222
+beinan:333333
+
+用户得是系统用户，密码可以与用户的系统密码不同。
+
+
+
+rsyncd.motd的内容为
++++++++++++++++++++++++++++
++ welcome to syncserver+
++++++++++++++++++++++++++++
+
+
+sync客户端同步数据
+rsync -avzP syncserver@syncserver.org::syncserverhome   syncserverhome
+
+-a 参数，相当于-rlptgoD，-r 是递归 -l是链接文件，意思是拷贝链接文件；-p 表示保持文件原有权限；-t 保持文件原有时间；-g 保持文件原有用户组；-o 保持文件原有属主；-D 相当于块设备文件；
+-z 传输时压缩；
+-P 传输进度；
+-v 传输时的进度等信息，和-P有点关系，自己试试。可以看文档；
+
+–delete 选项，表示客户端上的数据要与服务器端完全一致，如果 /tmp/david/目录中有服务器上不存在的文件，则删除。
+
+–password-file=		#指定密码文件
+
+
+
+
+一键配置rsync服务器脚本
+
+名称为rsync.sh
+
+#!/bin/bash
+#rsync Written by zhumaohai
+#For more information please visit https://www.centos.bz
+echo "Please input the rsync username:"
+read username
+echo "Please input the rsync username password:"
+read password
+echo "Please input the allow ip address:"
+read allowip
+echo "Please input the path you want to rsync:"
+read rsyncpath
+echo "==========================input all completed========================"
+echo "==========================install rsync========================"
+yum -y install rsync
+useradd $username
+mkdir /etc/rsyncd
+cat >/etc/rsyncd/rsyncd.conf<<EOF
+# Minimal configuration file for rsync daemon
+# See rsync(1) and rsyncd.conf(5) man pages for help
+ 
+# This line is required by the /etc/init.d/rsyncd script
+pid file = /var/run/rsyncd.pid   
+port = 873
+#address = $serverip
+#uid = nobody
+#gid = nobody   
+uid = root   
+gid = root   
+ 
+use chroot = yes
+read only = yes
+ 
+ 
+#limit access to private LANs
+hosts allow=$allowip
+hosts deny=*
+ 
+max connections = 5
+motd file = /etc/rsyncd/rsyncd.motd
+ 
+#This will give you a separate log file
+#log file = /var/log/rsync.log
+ 
+#This will log every file transferred - up to 85,000+ per user, per sync
+#transfer logging = yes
+ 
+log format = %t %a %m %f %b
+syslog facility = local3
+timeout = 300
+ 
+[home]   
+path = $rsyncpath   
+list=yes
+ignore errors
+auth users = $username
+secrets file = /etc/rsyncd/rsyncd.secrets 
+EOF
+echo "$username:$password" > /etc/rsyncd/rsyncd.secrets
+chmod 600 /etc/rsyncd/rsyncd.secrets
+cat >/etc/rsyncd/rsyncd.motd<<EOF
++++++++++++++++++++++++++++
++ centos.bz  rsync  2011-2012 +
++++++++++++++++++++++++++++
+EOF
+/usr/bin/rsync --daemon  --config=/etc/rsyncd/rsyncd.conf
+echo "/usr/bin/rsync --daemon  --config=/etc/rsyncd/rsyncd.conf" >>/etc/rc.d/rc.local
+
+ps -aux | grep rsync
+
+2、赋予脚本权限
+chmod +x rsync.sh
+
+3、执行脚本
+./rsync.sh
