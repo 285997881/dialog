@@ -35,7 +35,11 @@ servlet CGI
 jsp java server page  
 
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
-	
+http://www.oracle.com/technetwork/cn/java/javase/downloads/index.html	
+
+http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html
+
+http://download.oracle.com/otn/java/jdk/6u45-b06/jdk-6u45-linux-x64-rpm.bin
 
 	
 配置java环境变量

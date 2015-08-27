@@ -1,0 +1,42 @@
+rz/sz 版本在5以前，6以后需要安装lszrz包
+
+
+文件传输协议
+
+文件传输是数据交换的主要形式。在进行文件传输时，为使文件能被正确识别和传送，我们需要在两台计算机之间建立统一的传输协议。这个协议包括了文件的识别、传送的起止时间、错误的判断与纠正等内容。常见的传输协议有以下几种：
+	ASCII：这是最快的传输协议，但只能传送文本文件。 
+	Xmodem：这种古老的传输协议速度较慢，但由于使用了CRC错误侦测方法，传输的准确率可高达99.6%。 
+	Ymodem：这是Xmodem的改良版，使用了1024位区段传送，速度比Xmodem要快
+	Zmodem：Zmodem采用了串流式（streaming）传输方式，传输速度较快，而且还具有自动改变区段大小和断点续传、快速错误侦测等功能。这是目前最流行的文件传输协议。 
+	
+	
+	
+lrzsz就是一个支持 Zmodem 传输协议的工具。我们通过sz/rz两个命令，分别发送/接收文件
+
+yum -y install lrzsz
+
+
+wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz
+tar zxvf lrzsz-0.12.20.tar.gz && cd lrzsz-0.12.20
+./configure && make && make install
+
+
+cd /usr/bin
+ln -s /usr/local/bin/lrz rz
+ln -s /usr/local/bin/lsz sz
+
+
+
+sz用法：发送出去
+### 下载一个文件： 
+# sz filename 
+### 下载多个文件： 
+# sz filename1 filename2
+### 下载dir目录下的所有文件，不包含dir下的文件夹： 
+# sz dir/*
+
+
+rz用法：接收回来
+
+### 直接键入rz命令即可
+# rz

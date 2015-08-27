@@ -1,0 +1,191 @@
+oracle 11g各种下载地址
+
+plsql developer地址
+http://www.allroundautomations.com/bodyplsqldevreg.html
+
+适用于 Microsoft Windows（32 位）的 Oracle Database 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_database_1of2.zip
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_database_2of2.zip
+
+适用于 Microsoft Windows（32 位）的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_client.zip
+
+适用于 Microsoft Windows（32 位）的 Oracle Fusion Middleware Web Tier Utilities 11g (11.1.1.2.0)
+http://download.oracle.com/otn/nt/middleware/11g/ofm_webtier_win_11.1.1.2.0_32_disk1_1of1.zip
+
+适用于 Microsoft Windows（32 位）的 Oracle Database Gateways 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_gateways.zip
+
+Oracle Database 11g 第 2 版 Examples
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_examples.zip
+
+适用于 Microsoft Windows（32 位）的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win32_11gR2_deinstall.zip
+
+
+
+Microsoft Windows (x64) 光盘 1、光盘 2 (2GB)
+
+
+适用于 Microsoft Windows (x64) 的 Oracle Database 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_database_2of2.zip
+
+适用于 Microsoft Windows (x64) 的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_client.zip
+
+适用于 Microsoft Windows (x64) 的 Oracle Database 11g 第 2 版 Grid Infrastructure (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_grid.zip
+
+适用于 Microsoft Windows (x64) 的 Oracle Fusion Middleware Web Tier Utilities 11g (11.1.1.2.0)
+http://download.oracle.com/otn/nt/middleware/11g/ofm_webtier_win_11.1.1.2.0_64_disk1_1of1.zip
+
+适用于 Microsoft Windows (x64) 的 Oracle Database Gateways 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_gateways.zip
+
+Oracle Database 11g 第 2 版 Examples
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_examples.zip
+
+适用于 Microsoft Windows (x64) 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/nt/oracle11g/112010/win64_11gR2_deinstall.zip
+
+
+
+Linux x86 光盘 1、光盘 2 (2GB)
+
+适用于 Linux x86 的 Oracle Database 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_database_1of2.zip
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_database_2of2.zip
+
+适用于 Linux x86 的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_client.zip
+
+适用于 Linux x86 的 Oracle Database 11g 第 2 版 Grid Infrastructure (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_grid.zip
+
+Oracle Database 11g 第 2 版 Examples
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_examples.zip
+
+适用于 Linux x86 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux_11gR2_deinstall.zip
+
+
+ Linux x86-64 光盘 1、光盘 2 (2GB)
+适用于 Linux x86-64 的 Oracle Database 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_database_2of2.zip
+
+适用于 Linux x86-64 的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_client.zip
+
+适用于 Linux x86-64 的 Oracle Database 11g 第 2 版 Grid Infrastructure (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_grid.zip
+
+Oracle Database 11g 第 2 版 Examples
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_examples.zip
+
+适用于 Linux x86-64 的 Oracle Database Gateways 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_gateways.zip
+
+适用于 Linux x86-64 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/linux/oracle11g/R2/linux.x64_11gR2_deinstall.zip
+
+
+
+Solaris (SPARC)（64 位） 光盘 1、光盘 2 (2GB)
+
+
+适用于 Solaris 操作系统 (SPARC)（64 位）的 Oracle 数据库 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_database_2of2.zip
+
+适用于 Solaris 操作系统 (SPARC) 的 Oracle 数据库 11g 第 2 版客户端 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_client.zip （64位)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_client32.zip （32位）
+
+适用于 Solaris 操作系统 (SPARC)（64 位）的 Oracle 数据库 11g 第 2 版网格基础架构 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_grid.zip
+
+适用于 Solaris 操作系统 (SPARC)（64 位）的 Oracle 数据库 11g 第 2 版示例
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_examples.zip
+
+适用于 Solaris 操作系统 (SPARC)（64 位）的 Oracle 数据库网关 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_gateways.zip
+
+适用于 Solaris 操作系统 (SPARC) 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_deinstall.zip （64位)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.sparc64_11gR2_deinstall32.zip（32位）
+
+
+
+Solaris (x86-64) 光盘 1、光盘 2 (2GB)
+
+
+适用于 Solaris 操作系统 (x86-64) 的 Oracle 数据库 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_database_2of2.zip
+
+适用于 Solaris 操作系统 (x86-64) 的 Oracle 数据库 11g 第 2 版客户端 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_client.zip （64位)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x86_11gR2_client.zip （32位）
+
+适用于 Solaris 操作系统 (x86-64) 的 Oracle 数据库 11g 第 2 版网格基础架构 (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_grid.zip
+
+适用于 Solaris 操作系统 (x86-64) 的 Oracle 数据库 11g 第 2 版示例
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_examples.zip
+
+适用于 Solaris 操作系统 (x86-64) 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x64_11gR2_deinstall.zip （64位)
+http://download.oracle.com/otn/solaris/oracle11g/R2/solaris.x86_11gR2_deinstall.zip （32位）
+
+
+
+HP-UX Itanium 光盘 1、光盘 2 (2GB)
+
+
+适用于 HP-UX Itanium 的 Oracle 数据库 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_database_2of2.zip
+
+适用于 HP-UX Itanium 的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_client.zip （64位)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_client32.zip（32位）
+
+适用于 HP-UX Itanium 的 Oracle 数据库 11g 第 2 版 Grid Infrastructure (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_grid.zip
+
+适用于 HP-UX Itanium 的 Oracle Database 11g 第 2 版 Examples (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_examples.zip
+
+适用于 HP-UX Itanium 的 Oracle Database Gateways 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_gateways.zip
+
+适用于 HP-UX Itanium 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_deinstall.zip （64位)
+http://download.oracle.com/otn/hp/oracle11g/R2/hpia64_11gR2_deinstall32.zip （32位）
+ AIX (PPC64) 光盘 1、光盘 2 (2GB)
+
+
+适用于 AIX (PPC64) 的 Oracle Database 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_database_1of2.zip
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_database_2of2.zip
+
+适用于 AIX 的 Oracle Database 11g 第 2 版 Client (11.2.0.1.0)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_client.zip （64位)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc32_11gR2_client.zip （32位）
+
+适用于 AIX (PPC64) 的 Oracle Database 11g 第 2 版 Grid Infrastructure (11.2.0.1.0)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_grid.zip
+
+适用于 AIX (PPC64) 的 Oracle Database Gateways 11g 第 2 版 (11.2.0.1.0)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_gateways.zip
+
+适用于 AIX 的 Oracle De-install Utility (11.2.0.1.0)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc64_11gR2_deinstall.zip (64位)
+http://download.oracle.com/otn/aix/oracle11g/R2/aix.ppc32_11gR2_deinstall.zip (32位)
+
+
+
+win32_11_R1
+http://download.oracle.com/otn/nt/oracle11g/win32_11gR1_database.zip 

@@ -1,0 +1,67 @@
+yum
+
+
+创建yum仓库
+创建yum仓库需要createrepo命令
+yum install createrepo
+
+
+将yum目录创建为了yum仓库
+createrepo /var/yum
+
+会在yum目录下生成一个repodata目录，其中包括四个文件
+primary.xml.gz		主要记录yum仓库中所有软件包的包名和相互之间的依赖关系，还包含了每一个rpm包的安装要生成什么文件。
+filelists.xml.gz	存放yum仓库中每一个RPM包中的文件的相关信息
+other.xml.gz		放额外信息，如使用changelog选项显示的信息等。
+repomd.xml			存放上面三个文件的校验码和时间戳。
+
+ 这四个文件会在第一次使用yum命令的时候下载到yum设定的缓存中，如果yum仓库中有软件更新，则primary.xml.gz，filelists.xml.gz，other.xml.gz这三个文件内容就会改变，检测到改变之后，就会从yum仓库下载新的文件。
+ 
+ 
+ 
+ 
+ 
+ yum客户端
+ 
+ /etc/yum.repo.d/*.repo
+ [reponame]			对应yum仓库的识别符号，[]一定不能省，不能使用main，其他的任意，多个名字的话不能重复
+ name=			只是说明这个yum容器的意义
+ baseurl=file:///var/yum		指定yum源的位置
+ enabled=1       yum仓库是否启用，0表示禁用，1表示启用
+ gpgcheck=0      是否要验证数字证书
+ gpgkey=		 证书位置
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  yum命令：
+    yum list all 显示系统上所有的软件包
+    yum list installed 显示系统上已经安装的软件包
+    yum list available 显示yum仓库中尚未使用的软件包
+    yum list updates 显示系统上能升级的软件包
+    
+    yum install package_name... 安装RPM包 指定软件包的名字就可以了，下面相同
+    yum remove package_name... 卸载RPM包
+    yum update package_name... 更新RPM包
+    yum info package_name... 显示软件包的摘要信息
+    yum provides filename    显示这个文件由哪个RPM包安装
+    yum downgrade package_name... 降级软件包
+    yum reinstall package_name... 重装RPM包
+    
+    yum repolist all 显示所有的yum仓库
+    yum repolist enabled 显示启用的yum仓库
+    yum repolist disabled 显示未启用的yum仓库
+ 
+    yum clean all 清空本地yum缓存
+    
+    yum grouplist 显示已安装的软件包组的信息
+    yum groupinstall "groupname" 安装RPM包组
+    yum groupremove "groupname" 卸载RPM包组
+    yum groupinfo "groupname" 查看包组的相关信息
+    yum localinstall localfile... 安装本地的一个软件包，如果这个包需要依赖其他RPM包的话，会从yum源直接下载并安装（即自动解决依赖关系）
+    
+    yum localupdate localfile...用本地的软件包进行更新
+    yum search keyword 查找yum仓库符合关键字的RPM包的相关属性信息

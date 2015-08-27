@@ -1,0 +1,32 @@
+nmon
+
+
+Nmon 是一个分析aix和linux性能的免费工具（其主要是ibm为自己的aix操作系统开发的，但是也可以应用在linux操作系统上），而nmon_analyser是nmon的一个工具可以把nmon生成的报告转化成excel报表的形式供我们查看。
+
+
+http://nmon.sourceforge.net/pmwiki.php?n=Site.Download
+http://sourceforge.net/projects/nmon/files/nmon_linux_14g.tar.gz
+
+
+https://www.ibm.com/developerworks/community/wikis/form/anonymous/api/wiki/61ad9cf2-c6a3-4d2c-b779-61ff0266d32a/page/b7fc61a1-eef9-4756-8028-6e687997f176/attachment/aa4aa2b9-e782-4bae-948c-498373077013/media/nmon_analyser_v46.zip
+
+
+nmon是个交互式程序，当我们执行nmon的时候会出现一个交互窗口，我们执行相关的命令就会出现相关的信息。
+
+查看帮助
+nmon -h 
+
+
+数据采集
+	-f   生成表格
+		-s 	seconds		采集频率
+		-c  number		采集次数
+		-t  			表格包括top数据
+		-N				包括nfs文件系统
+		-m				生成的文件保存位置
+		
+		
+nmon_analyser的使用方法
+	打开文件将下载的.nmon文件导入进来，会生成一个运行报告
+
+		

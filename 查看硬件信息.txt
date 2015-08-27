@@ -1,0 +1,120 @@
+查看硬件信息
+
+查看CPU信息
+cat /proc/cpuinfo 
+
+cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c
+  8  Intel(R) Xeon(R) CPU            E5410   @ 2.33GHz
+(看到有8个逻辑CPU, 也知道了CPU型号)
+
+cat /proc/cpuinfo | grep flags | grep ' lm ' | wc -l
+   8
+(结果大于0, 说明支持64bit计算. lm指long mode, 支持lm则是64bit)
+
+查看CPU运行模式是64位或者32位
+getconf LONG_BIT 
+
+
+查看内存信息
+cat /proc/meminfo
+
+free -m 
+
+查看操作系统内核信息
+uname -a 
+
+查看当前操作系统发行版信息
+cat /etc/issue | grep Linux
+
+lscpu	查询cpu的详细信息
+lshw	显示硬件信息列表
+lspci	显示pci总线相关信息
+lsscsi	列出scsi设备信息
+lsusb	列出usb总线信息，及设备信息
+lsblk - 列出块设备信息
+
+
+查看CPU信息：cat /proc/cpuinfo
+查看板卡信息：cat /proc/pci
+查看PCI信息：lspci (相比cat /proc/pci更直观）
+查看内存信息：cat /proc/meminfo
+查看USB设备：cat /proc/bus/usb/devices
+查看键盘和鼠标:cat /proc/bus/input/devices
+
+
+Dmidecode
+	DMI (Desktop Management Interface, DMI)就是帮助收集电脑系统信息的管理系统，DMI信息的收集必须在严格遵照SMBIOS规范的前提下进行。 SMBIOS(System Management BIOS)是主板或系统制造者以标准格式显示产品管理信息所需遵循的统一规范。SMBIOS和DMI是由行业指导机构Desktop Management Task Force (DMTF)起草的开放性的技术标准，其中DMI设计适用于任何的平台和操作系统。
+	
+	DMI充当了管理工具和系统层之间接口的角色。它建立了标准的可管理系统更加方便了电脑厂商和用户对系统的了解。DMI的主要组成部分是Management Information Format (MIF)数据库。这个数据库包括了所有有关电脑系统和配件的信息。通过DMI，用户可以获取序列号、电脑厂商、串口信息以及其它系统配件信息。
+	
+
+dmidecode的输出格式一般如下：
+—————————————-
+Handle 0×0002
+DMI type 2, 8 bytes
+Base Board Information
+Manufacturer:Intel
+Product Name: C440GX+
+Version: 727281-0001
+Serial Number: INCY92700942
+—————————————-
+其中的前三行都称为记录头(recoce Header), 其中包括了：
+1、recode id(handle): DMI表中的记录标识符，这是唯一的,比如上例中的Handle 0×0002。
+2、dmi type id: 记录的类型，譬如说:BIOS，Memory，上例是type 2，即”Base Board Information”
+3、recode size: DMI表中对应记录的大小，上例为8 bytes.（不包括文本信息，所有实际输出的内容比这个size要更大。）
+记录头之后就是记录的值：
+4、decoded values: 记录值可以是多行的，比如上例显示了主板的制造商(manufacturer)、model、version以及serial Number。
+
+
+dmidecode的作用是将DMI数据库中的信息解码，以可读的文本方式显示。由于DMI信息可以人为修改，因此里面的信息不一定是系统准确的信息。
+
+
+安装Dmidecode：
+
+Dmidecode 在主流的 Linux 发行版中都可以找到，只需通过所用发行版的包管理器安装即可，如：
+
+apt-get install dmidecode
+# Debian/Ubuntu
+yum install dmidecode
+# RHEL/CentOS/Fedora
+pacman -S dmidecode
+# Arch Linux
+emerge -av dmidecode
+# Gentoo
+
+或者使用官方源码包安装：
+Dmidecode源码包下载地址：http://download.savannah.gnu.org/releases/dmidecode/
+Win版本下载地址：http://gnuwin32.sourceforge.net/packages/dmidecode.htm
+
+
+Usage: dmidecode [OPTIONS]
+Options are:
+-d, --dev-mem FILE Read memory from device FILE (default: /dev/mem)
+#从设备文件读信息，输出内容与不加参数标准输出相同
+-h, --help Display this help text and exit
+#显示帮助信息
+-q, --quiet Less verbose output
+#显示更少的简化信息
+-s, --string KEYWORD Only display the value of the given DMI string
+#只显示指定DMI字符串的信息
+-t, --type TYPE Only display the entries of given type
+#只显示指定条目的信息
+-u, --dump Do not decode the entries
+#显示未解码的原始条目内容
+--dump-bin FILE Dump the DMI data to a binary file
+--from-dump FILE Read the DMI data from a binary file
+-V, --version Display the version and exit
+#显示版本信息
+
+
+命令用法示例：
+
+1、查看服务器型号：dmidecode | grep 'Product Name'
+
+2、查看主板的序列号：dmidecode |grep 'Serial Number'
+
+3、查看系统序列号：dmidecode -s system-serial-number
+
+4、查看内存信息：dmidecode -t memory
+
+5、查看OEM信息：dmidecode -t 11

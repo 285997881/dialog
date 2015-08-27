@@ -1,0 +1,171 @@
+redis (REmote DIctionary Serve)
+(Key-Value存储系统（cache and store）)
+Redis是一种面向“键/值”对类型数据的分布式NoSQL数据库系统
+
+http://redis.io/
+http://redis.cn/
+
+http://download.redis.io/releases/redis-3.0.3.tar.gz
+
+
+wget http://download.redis.io/releases/redis-2.8.17.tar.gz
+tar xzf redis-2.8.17.tar.gz
+cd redis-2.8.17
+make
+
+
+
+make完后redis目录src下会出现编译后的redis服务程序redis-server,还有用于测试的客户端程序redis-cli
+
+
+启动redis服务.
+./redis-server
+
+也可以通过启动参数告诉redis使用指定配置文件使用下面命令启动。
+./redis-server redis.conf
+
+可以使用测试客户端程序redis-cli和redis服务交互
+redis-cli(redis command line interface)
+
+redis-cli的连接方法
+redis-cli -h 127.0.0.1 -p 6379 
+
+测试连接正常
+
+$redis-cli ping
+pong
+
+
+./redis-cli
+redis> set foo bar
+OK
+redis> get foo
+"bar"
+
+
+utils下有个redis_init_script文件，可作为服务的启停脚本。
+
+
+
+默认端口 6379
+
+
+redis.conf
+daemonize	yes			#redis以守护进程模式运行
+
+
+
+
+关闭redis
+强行关闭会使数据丢失，正确的关闭方法
+redis-cli shutdown
+redis收到shutdown命令后，会先断开所有客户端连接，然后根据配置执行持久化，最后退出。
+
+get keyname		读取键
+
+set keyname		#设置键
+
+keys *	#获得所有的键
+keys需遍历redis的所有键，当键的数量较多时，会影响性能
+
+exists keyname		#判断一个键是否存在，1为存在，0位不存在
+
+del	keyname			#删除键
+
+type keyname		#获得键值的数据类型
+数据类型有 string(字符串)  hash(散列) list(列表) set(集合) zset(有序集合)
+
+
+lpush
+向指定的列表类型的键中添加一个元素，如没有则创建一个
+
+
+数据类型
+string
+hash
+list
+set
+zset
+
+string数据类型的操作
+最大存储容量512MB
+
+set key value
+
+incr keyname	#键值递增，键值需是数字
+
+incrby key  increment	#递增指定的数量
+
+decr  keyname decrement  #减少指定的数量，不加数字是递减
+
+incrbyfloat key increment   #增加浮点数
+
+append key value     #向键值末尾添加
+
+strlen key			#获得字符串长度
+
+mget key key		#同时获得多个键值
+
+mset key value  key value	#同时设置多个键值		
+
+位操作
+getbit key 
+setbit key
+
+
+hash数据类型的操作
+hset key field value
+hget key field
+hmset key field value [field value ...]
+hmget key field [field ...] 
+
+hexists key field 			#判断字段是否存在
+
+hsetnx key fiels value		#字段不存在时赋值
+
+hincrby key field increment		#增加数字
+
+hdel key field [field ...]		#删除字段
+
+
+列表数据类型(list)
+lpush key value [value ...]		#向列表左边添加元素
+
+rpush key value [value ...]		#向列表右边添加元素
+
+lpop key						#向列表左边移除元素
+
+rpop key 						#向列表右边移除元素
+
+llen key						#获取列表中元素的个数
+
+lrange key start stop			#查看列表的内容
+lrange key 0 3
+
+lrem key count value			#删除列表中指定的值
+
+
+
+集合类型
+sadd key member [member ...]	#添加元素
+
+srem key member [member ...]	#删除元素
+
+smembers key 					#获得集合的所有元素
+
+sismember key member 			#判断元素是否在集合中
+
+sdiff key [key ...]				#差集运算
+
+sinter key [key ...]			#交集运算
+
+sunion key [key ...]			#并集运算
+
+
+
+
+
+
+http://www.oschina.net/question/12_18065
+
+http://www.runoob.com/redis/redis-conf.html

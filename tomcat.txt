@@ -1,3 +1,6 @@
+http://www.itjhwd.com/tag/tomcat/
+
+
 tomcat
 是由Apache软件基金会下属的Jakarta项目开发的一个Servlet容器，按照Sun Microsystems提供的技术规范，实现了对Servlet和JavaServer Page（JSP）的支持，并提供了作为Web服务器的一些特有功能，如Tomcat管理和控制平台、安全域管理和Tomcat阀等。由于Tomcat本身也内含了一个HTTP服务器，它也可以被视作一个单独的Web服务器。
 
@@ -14,13 +17,20 @@ http://mirrors.cnnic.cn/apache/tomcat/tomcat-6/v6.0.44/bin/apache-tomcat-6.0.44.
 前端请求被tomcat直接接收或者由前端的代理，通过HTTP，或者AJP代理给Tomcat，此时请求被tomcat中的connector接收，不同的connector和Engine被service组件关联起来，在一个Engine中由Host容器定义了许多的虚拟主机，每一个Host容器代表一个主机。在各自的Host中，又可以定义多个Context，用此来定义一个虚拟主机中的多个独立的应用程序。
 
 conf/server.xml
-<server  />
-	<service  />
-		<connector  />
-		<engine  />
-			<host />
-				<context  />
 
+<server>
+	<service>
+		<connector />
+		<engine>{<logger><valve><realm>}
+			<host>{<logger><valve><realm>}
+				<context path=""  />
+					<valve>
+					<realm>
+					<wrapper>
+			</host>
+		</engine>
+	</service>
+</server >
  				
 事先需安装java并配置java环境变量
 vim /etc/profile.d/java.sh
@@ -53,12 +63,12 @@ tomcat的目录结构
 server.xml配置简介
 
 元素名
-server	
+server	(实现类为standardserver，可包含多个services)
 	port	指定一个端口，这个端口负责监听关闭tomcat的请求
 	shutdown	指定向端口发送的命令字符串
-service	
+service	 (实现类为standardservice，)
 	name	指定service的名字
-Connector(表示客户端和service之间的连接)	
+Connector	
 	port	指定服务器端要创建的端口号，并在这个断口监听来自客户端的请求
 	minProcessors	服务器启动时创建的处理请求的线程数
 	maxProcessors	最大可以创建的处理请求的线程数
@@ -83,7 +93,44 @@ Logger(表示日志，调试和错误信息)
 	timestamp	如果为true，则log文件名中要加入时间，如下例:localhost_log.2001-10-04.txt
 Realm(表示存放用户名，密码及role的数据库)
 	className	指定Realm使用的类名，此类必须实现org.apache.catalina.Realm接口
-Valve(功能与Logger差不多，其prefix和suffix属性解释和Logger 中的一样)
+Valve(功能与Logger差不多，其prefix和suffix属性解释和Logger中的一样)
 	className指定Valve使用的类名，如用org.apache.catalina.valves.AccessLogValve类可以记录应用程序的访问信息
 	directory	指定log文件存放的位置
 	pattern	有两个值，common方式记录远程主机名或ip地址，用户名，日期，第一行请求的字符串，HTTP响应代码，发送的字节数。combined方式比common方式记录的值更多
+
+	
+	
+	
+catalina.properties	
+
+安全设置
+package.access
+package.definition
+类加载设置
+common.loader
+server.loader
+shared.loader
+不需要扫描的类设置
+tomcat.util.scan.DefaultJarScanner.jarsToSkip
+org.apache.catalina.startup.ContextConfig.jarsToSkip
+org.apache.catalina.startup.TldConfig.jarsToSkip
+字符缓存设置
+tomcat.util.buf.StringCache.byte.enabled
+tomcat.util.buf.StringCache.char.enabled
+tomcat.util.buf.StringCache.trainThreshold
+tomcat.util.buf.StringCache.cacheSize
+
+
+
+加载类的顺序
+Bootstrap--->System--->/WEB-INF/classes---> /WEB-INF/lib/*.jar---> Common--->Server--->Shared
+
+
+Common的配置是通过catalina.properties中的common.loader设置的
+
+通常情况下，common.loader是已经设置好的，不需要修改
+
+unpacked classes and resources in $CATALINA_BASE/lib
+JAR files in $CATALINA_BASE/lib
+unpacked classes and resources in $CATALINA_HOME/lib
+JAR files in $CATALINA_HOME/lib

@@ -1,0 +1,22 @@
+TMOUT
+
+
+各个公司有各个公司的要求，而SSH就是因安全故有很多人在用。有些人需要SSH连接时自动断开时间长一些，也有些因为比较注重安全考虑需要对SSH的自动断开超时设置短些！刚好我哥打算试试这个SSH配置，我也就在我的测试环境小试牛刀了~又多学点东西！ 设置客户端如果SSH连接及Telnet连接超时时间，其实就是增加了一个环境变量TMOUT，就是timeout超时 如果配置就跟我来设置吧！
+
+[root@localhost ~]# cd /etc/profile.d/ 
+#创建两个空白文件autologout.csh 、antologout.sh用来保存TMOUT配置 
+[root@localhost profile.d]# touch autologout.csh 
+[root@localhost profile.d]# touch antologout.sh 
+[root@localhost profile.d]# vi autologout.sh #编辑autologout.sh 
+#键入如下数据 
+#auto out in 1 minutes 
+TMOUT=60 #超时时间，单位为s 
+readonly TMOUT #设置TMOUT变量只读 
+export TMOUT #设置环境TMOUT 
+#保存退出
+[root@localhost profile.d]# vi autologout.csh #编辑autologout.csh 
+#键入 
+set -r autologout 2 
+#保存退出 
+[root@localhost profile.d]# chmod +x autologout.* #给与可执行权限 
+#断开Client，重新登录终端试试看，是不是一分钟不使用ssh或者telnet就会自动断开连接
