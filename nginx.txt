@@ -96,8 +96,9 @@ gzip(ngx_http_gzip_module)
 gzip 				on|off;
 gzip_buffers		4 16k;
 gzip_min_length 	1000;#允许压缩的页面最小字节
-gzip_type			text/plain application/x-javascript text/css application/xml text/javascript application/x-httpd-php;
-
+gzip_types			text/plain application/x-javascript 
+					text/css application/xml text/javascript
+					application/x-httpd-php;
 gzip_comp_level				#压缩比例，默认1，可到9
 gzip_http_version			#http的协议版本,默认1.1
 gzip_vary			on|off		和http头有关系，加个vary头，给代理服务器用的，有的浏览器支持压缩，有的不支持，所以避免浪费不支持的也压缩，所以根据客户端的HTTP头来判断，是否需要压缩
@@ -153,6 +154,7 @@ fastcgi_temp_file_write_size		#写入缓存需要多大的数据块，默认是f
 
 
 proxy(ngx_http_proxy_module)
+
 proxy_bind
 proxy_buffer_size					#缓冲区大小
 proxy_buffering

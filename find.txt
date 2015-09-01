@@ -1,0 +1,29 @@
+find
+
+find pathname -options [-print -exec -ok ...]
+
+pathname		查找的目录
+
+
+-exec			对匹配的文件执行命令，命令形式为 'command' {} \;    {}和;之间有空格
+
+-ok				与exec相同，只是在执行命令时，会提示是否执行
+
+
+
+命令选项
+	-name		按名称查找
+	-perm		按文件权限查找
+	-user		按文件属主查找
+	-group		按文件属组查找
+	-mtime -n|+n 		按文件更改时间查找，-n表示更改时间距现在n天内，+n表示修改时间距现在n天以前
+	-type		查找某一类型的文件
+			b		块设备文件
+			d		目录
+			c		字符设备文件
+			p		管道文件
+			l		符号链接
+			f 		普通文件
+	-size {-|+}n 	按大小查找
+	
+			

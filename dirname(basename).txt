@@ -1,0 +1,74 @@
+dirname(basename) 截取给定路径的目录
+
+dirname命令可以取给定路径的目录部分（strip non-directory suffix from file name）。这个命令很少直接在shell命令行中使用，一般把它用在shell脚本中，用于取得脚本文件所在目录，然后将当前目录切换过去。
+
+根据手册页上说的“Print  NAME  with  its  trailing  /component  removed; if NAME contains no /’s, output ‘.’ (meaning the current directory).”，似乎说“取给定路径的目录部分” 并不能很准确的概括dirname命令的用途。
+
+Linux下还有一个命令是basename，它与dirname相反，是取得文件名称部分。
+
+用法
+	dirname /path
+	dirname filename
+	dirname option
+	
+	
+示例
+# dirname /usr/bin/sort 
+/usr/bin
+
+dirname stdio.h 
+.
+
+dirname /usr/bin 
+/usr
+
+dirname /usr/bin/ 
+/usr
+
+
+
+在bash脚本中的运用
+#!/bin/sh  
+  
+# 跳转到脚本所在目录  
+cd $(dirname "$0") || exit 1  
+
+
+另一个写法是：
+cd `dirname $0` 其中反引号··等同于$()
+
+
+pathname=/usr/bin/sort
+
+echo $(dirname $pathname) ${pathname%/*} 
+/usr/bin 					/usr/bin
+
+
+pathname=/usr/bin/
+echo $(dirname $pathname) ${pathname%/*} 
+/usr					 /usr/bin
+
+
+pathname=/usr/bin
+echo $(dirname $pathname) ${pathname%/*} 
+/usr			 		/usr
+
+
+pathname=/usr/
+echo $(dirname $pathname) ${pathname%/*} 
+/ 							/usr
+
+
+pathname=/usr
+echo $(dirname $pathname) ${pathname%/*} 
+/
+
+pathname=/
+echo $(dirname $pathname) ${pathname%/*} 
+/
+
+pathname=stdio.h
+echo $(dirname $pathname) ${pathname%/*} 
+. 							stdio.h
+
+怎样使用shell函数来实现dirname命令
